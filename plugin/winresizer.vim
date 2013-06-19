@@ -68,7 +68,7 @@ let g:winresizer_horiz_resize = get(g:, 'winresizer_horiz_resize', 3)
 " resize mode key mapping
 let s:default_keycode = {'left':'104', 'down':'106', 'up':'107', 'right':'108', 'finish':'13', 'cancel':'113'}
 
-let g:winresizer_keycode_left  = get(g:, 'winresizer_keycode_left ', s:default_keycode['left'])
+let g:winresizer_keycode_left  = get(g:, 'winresizer_keycode_left', s:default_keycode['left'])
 let g:winresizer_keycode_down  = get(g:, 'winresizer_keycode_down',  s:default_keycode['down'])
 let g:winresizer_keycode_up    = get(g:, 'winresizer_keycode_up',    s:default_keycode['up'])
 let g:winresizer_keycode_right = get(g:, 'winresizer_keycode_right', s:default_keycode['right'])
