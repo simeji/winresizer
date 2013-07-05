@@ -66,7 +66,15 @@ let g:winresizer_vert_resize  = get(g:, 'winresizer_vert_resize', 10)
 let g:winresizer_horiz_resize = get(g:, 'winresizer_horiz_resize', 3)
 
 " resize mode key mapping
-let s:default_keycode = {'left':'104', 'down':'106', 'up':'107', 'right':'108', 'finish':'13', 'cancel':'113'}
+let s:default_keycode = {
+             \           'left'  :'104',
+             \           'down'  :'106',
+             \           'up'    :'107',
+             \           'right' :'108',
+             \           'finish':'13',
+             \           'cancel':'113',
+             \           'escape':'27'
+             \          }
 
 let g:winresizer_keycode_left  = get(g:, 'winresizer_keycode_left', s:default_keycode['left'])
 let g:winresizer_keycode_down  = get(g:, 'winresizer_keycode_down',  s:default_keycode['down'])
@@ -75,6 +83,10 @@ let g:winresizer_keycode_right = get(g:, 'winresizer_keycode_right', s:default_k
 
 let g:winresizer_keycode_finish = get(g:, 'winresizer_keycode_finish', s:default_keycode['finish'])
 let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default_keycode['cancel'])
+let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
+
+" if <ESC> key downed, finish resize mode
+let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
 
 
 exec 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
@@ -105,8 +117,10 @@ fun! WinResizerStartResize()
   let l:rest = winrestcmd()
 
   while 1
+
     echo '[window resize mode]... "Enter": OK , "q": Cancel'
     let l:c = getchar()
+
     if l:c == l:codeList['left'] "h
       exec ':vertical resize '.l:left_resize
     elseif l:c == l:codeList['down'] "j
@@ -120,7 +134,7 @@ fun! WinResizerStartResize()
       exec ":redraw"
       echo "Canceled!"
       break
-    elseif l:c == g:winresizer_keycode_finish "Enter
+    elseif l:c == g:winresizer_keycode_finish || (g:winresizer_finish_with_escape == 1 && l:c == g:winresizer_keycode_escape)
       exec ":redraw"
       echo "Finished!"
       break
