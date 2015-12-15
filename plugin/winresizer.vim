@@ -1,27 +1,3 @@
-" FILE: winresizer.vim: vim plugin for easy resizing of your vim windows 
-" AUTHOR:	jimsei <twitter: @jimsei_jp> <gmail: jimsei.jp@gmail.com >
-" Date:		Nov 5, 2011
-" License: MIT license  
-" Permission is hereby granted, free of charge, to any person obtaining a copy
-" of this software and associated documentation files (the "Software"), to
-" deal in the Software without restriction, including without limitation the
-" rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-" sell copies of the Software, and to permit persons to whom the Software is
-" furnished to do so, subject to the following conditions:
-"
-" The above copyright notice and this permission notice shall be included in
-" all copies or substantial portions of the Software.
-"
-" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-" AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-" IN THE SOFTWARE.
-"
-" =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-"
 "---------------------------------------------------
 " WinResizer 
 "---------------------------------------------------
@@ -59,8 +35,13 @@ let s:default_start_key = '<C-E>'
 
 " If you define 'g:win_resizer_start_key' in .vimrc, 
 " will be started resize window by 'g:win_resizer_start_key' 
-let g:winresizer_start_key = get(g:, 'winresizer_start_key', s:default_start_key)
-let g:winresizer_enable    = get(g:, 'winresizer_enable',    1)
+let g:winresizer_start_key  = get(g:, 'winresizer_start_key', s:default_start_key)
+let g:winresizer_enable     = get(g:, 'winresizer_enable', 1)
+
+" for gui setting
+let s:default_gui_start_key = '<C-A>'
+let g:winresizer_gui_start_key = get(g:, 'winresizer_gui_start_key', s:default_gui_start_key)
+let g:winresizer_gui_enable = get(g:, 'winresizer_gui_enable', 0)
 
 let g:winresizer_vert_resize  = get(g:, 'winresizer_vert_resize', 10)
 let g:winresizer_horiz_resize = get(g:, 'winresizer_horiz_resize', 3)
@@ -73,7 +54,7 @@ let s:default_keycode = {
              \           'right' :'108',
              \           'finish':'13',
              \           'cancel':'113',
-             \           'escape':'27'
+             \           'escape':'27',
              \          }
 
 let g:winresizer_keycode_left  = get(g:, 'winresizer_keycode_left', s:default_keycode['left'])
@@ -88,64 +69,88 @@ let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
 
+let s:codeList = {
+        \  'left' : g:winresizer_keycode_left,
+        \  'down' : g:winresizer_keycode_down,
+        \  'up'   : g:winresizer_keycode_up,
+        \  'right': g:winresizer_keycode_right,
+        \}
 
-exec 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
+exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
 
 com! WinResizerStartResize call WinResizerStartResize()
 
-fun! WinResizerStartResize()
+if has("gui_running") && g:winresizer_gui_enable != 0
+  exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
+  com! WinResizerStartResizeGUI call WinResizerStartResizeGUI()
+endif
 
+fun! WinResizerStartResizeGUI()
+  if g:winresizer_enable == 0
+    return
+  endif
+  let commands = {
+      \  'left'   : 'let &columns = &columns - ' . g:winresizer_vert_resize,
+      \  'right'  : 'let &columns = &columns + ' . g:winresizer_vert_resize,
+      \  'up'     : 'let &lines = &lines - ' . g:winresizer_horiz_resize,
+      \  'down'   : 'let &lines = &lines + ' . g:winresizer_horiz_resize,
+      \  'cancel' : 'let &columns = ' . &columns . '|let &lines = ' . &lines . '|',
+      \}
+  call s:startReize(commands)
+
+endfun
+
+fun! WinResizerStartResize()
   if g:winresizer_enable == 0
     return
   endif
 
+  let behavior = s:getResizeBehavior()
 
-  let l:codeList = {
-        \           'left' : g:winresizer_keycode_left, 
-        \           'down' : g:winresizer_keycode_down, 
-        \           'up'   : g:winresizer_keycode_up,
-        \           'right': g:winresizer_keycode_right 
-        \          }
+  let commands = {
+        \  'left'   : ':vertical resize ' . behavior['left']  . g:winresizer_vert_resize,
+        \  'right'  : ':vertical resize ' . behavior['right'] . g:winresizer_vert_resize,
+        \  'up'     : ':resize ' . behavior['up']   . g:winresizer_horiz_resize,
+        \  'down'   : ':resize ' . behavior['down'] . g:winresizer_horiz_resize,
+        \  'cancel' : winrestcmd(),
+        \}
 
-  let l:behavior = s:getResizeBehavior(l:codeList)
+  call s:startReize(commands)
 
-  let l:left_resize  = l:behavior[l:codeList['left']]  . g:winresizer_vert_resize
-  let l:right_resize = l:behavior[l:codeList['right']] . g:winresizer_vert_resize
-  let l:up_resize    = l:behavior[l:codeList['up']]    . g:winresizer_horiz_resize
-  let l:down_resize  = l:behavior[l:codeList['down']]  . g:winresizer_horiz_resize
+endfun
 
-  let l:rest = winrestcmd()
+fun! s:startReize(commands)
 
   while 1
 
     echo '[window resize mode]... "Enter": OK , "q": Cancel'
-    let l:c = getchar()
+    let c = getchar()
 
-    if l:c == l:codeList['left'] "h
-      exec ':vertical resize '.l:left_resize
-    elseif l:c == l:codeList['down'] "j
-      exec ':resize '.l:down_resize
-    elseif l:c == l:codeList['up'] "k
-      exec ':resize '.l:up_resize
-    elseif l:c == l:codeList['right'] "l
-      exec ':vertical resize '.l:right_resize
-    elseif l:c == g:winresizer_keycode_cancel "q
-      exec l:rest
-      exec ":redraw"
+    if c == s:codeList['left'] "h
+      exe a:commands['left']
+    elseif c == s:codeList['down'] "j
+      exe a:commands['down']
+    elseif c == s:codeList['up'] "k
+      exe a:commands['up']
+    elseif c == s:codeList['right'] "l
+      exe a:commands['right']
+    elseif c == g:winresizer_keycode_cancel "q
+      exe a:commands['cancel']
+      redraw
       echo "Canceled!"
       break
-    elseif l:c == g:winresizer_keycode_finish || (g:winresizer_finish_with_escape == 1 && l:c == g:winresizer_keycode_escape)
-      exec ":redraw"
+    elseif c == g:winresizer_keycode_finish || (g:winresizer_finish_with_escape == 1 && c == g:winresizer_keycode_escape)
+      redraw
       echo "Finished!"
       break
     endif
-    exec ":redraw"
+    redraw
   endwhile
 endfun
 
 " Decide behavior of up, down, left and right key .
 " (to increase or decrease window size) 
-fun! s:getResizeBehavior(codeList)
+fun! s:getResizeBehavior()
   let signs = {'left':'-', 'down':'+', 'up':'-', 'right':'+'}
   let result = {}
   let ei = winresizer#getEdgeInfo()
@@ -157,10 +162,7 @@ fun! s:getResizeBehavior(codeList)
     let signs['up'] = '+'
     let signs['down'] = '-'
   endif
-  for direct in keys(a:codeList)
-    exec 'let result["' .a:codeList[direct]. '"] = "' . signs[direct] . '"' 
-  endfor
-  return result
+  return signs
 endfun
 
 " Get opposite sign about + and -
