@@ -3,8 +3,7 @@ winresizer.vim
 
 Very simple vim plugin for easy resizing of your vim windows.
 
-You can resize windows continuously by using typical keymaps of Vim. (`h`, `j`, `k`, `l`)
-
+You can resize windows continuously by using typical keymaps of Vim. (`h`, `j`, `k`, `l`)  
 The WindowResize mode makes your operation more quickly and more naturally.
 
 ## Demo
@@ -57,17 +56,3 @@ If you change setting and key mapping, can use below option.(in your vimrc)
     
     " If you cancel and quit window resize mode by `z` (keycode 122)
     let g:winresizer_keycode_cancel = 122
-
-## License
-
-winresizer is released under the MIT license.
-
-The MIT License (MIT)
-
-Copyright (c) 2012 simeji
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
