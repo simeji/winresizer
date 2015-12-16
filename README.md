@@ -4,6 +4,7 @@ winresizer.vim
 Very simple vim plugin for easy resizing of your vim windows.
 
 You can resize windows continuously by using typical keymaps of Vim. (`h`, `j`, `k`, `l`)
+
 The WindowResize mode makes your operation more quickly and more naturally.
 
 ## Demo
