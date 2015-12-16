@@ -1,7 +1,23 @@
 winresizer.vim
 ================
 
-very simple vim plugin for easy resizing of your vim windows
+Very simple vim plugin for easy resizing of your vim windows.
+
+You can resize windows continuously by using typical keymaps of Vim. (`h`, `j`, `k`, `l`)
+The WindowResize mode makes your operation more quickly and more naturally.
+
+## Demo
+
+### For terminal vim
+
+![demo-for-terminal](https://raw.github.com/wiki/simeji/winresizer/images/demo-for-terminal.gif)
+
+### For MacVim(gui vim)
+
+* MacVim Window resize 
+* Vim window resize
+
+![demo-for-macvim](https://raw.github.com/wiki/simeji/winresizer/images/demo-for-gui.gif)
 
 ## In default setting
 
@@ -16,11 +32,12 @@ very simple vim plugin for easy resizing of your vim windows
 
 ## Customize options
 
-If you change setting and key mapping, can use below option.
+If you change setting and key mapping, can use below option.(in your vimrc)
 
-|variable name|default key|description|
+|variable name|default value|description|
 |:-----------|:---------:|:----------|
 |g:winresizer_enable|1|Use winresizer (If this value is 0, this plugin will not work)|
+|g:winresizer_gui_enable|0|Use winresizer in GUI Vim (If this value is 0, this plugin will not work in GUI Vim such as Mac Vim)|
 |g:winresizer_finish_with_escape|1|If this value is 1, window resize mode is finished(fixed) by `Esc`|
 |g:winresizer_vert_resize|10|The change width of window size when `left` or `right` key is pressed|
 |g:winresizer_horiz_resize|3|The change height of window size when `down` or `up` key is pressed|
