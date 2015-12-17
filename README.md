@@ -32,7 +32,7 @@ The WindowResize mode makes your operation more quickly and more naturally.
 
 ## Customize options
 
-If you change setting and key mapping, can use below option.(in your vimrc)
+You can change setting and key mappings by using below options.(in your vimrc)
 
 |variable name|default value|description|
 |:-----------|:---------:|:----------|
@@ -42,6 +42,7 @@ If you change setting and key mapping, can use below option.(in your vimrc)
 |g:winresizer_vert_resize|10|The change width of window size when `left` or `right` key is pressed|
 |g:winresizer_horiz_resize|3|The change height of window size when `down` or `up` key is pressed|
 |g:winresizer_start_key|`Ctrl + e`|Start window resize mode|
+|g:winresizer_gui_start_key|`Ctrl + a`|Start window resize mode|
 |g:winresizer_keycode_left|104(`h`)|Expand window size to left|
 |g:winresizer_keycode_right|108(`l`)|Expand window size to right|
 |g:winresizer_keycode_down|106(`j`)|Expand window size to down|
@@ -49,7 +50,16 @@ If you change setting and key mapping, can use below option.(in your vimrc)
 |g:winresizer_keycode_finish|13(`Enter`)|Fix and escape from window resize mode|
 |g:winresizer_keycode_cancel|113(`q`)|Cancel and quit window resize mode|
 
+If you want to resize MacVim window itself, you must set below.
+
+```your_vimrc
+let g:winresizer_gui_enable = 1
+```
+
+
 #### _Example in your .vimrc_
+
+:memo: If you use winresizer with default settings. Don't have to do any settings.
 
     " If you want to start window resize mode by `Ctrl+T`
     let g:winresizer_start_key = '<C-T>'
