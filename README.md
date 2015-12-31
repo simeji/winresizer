@@ -42,7 +42,7 @@ You can change setting and key mappings by using below options.(in your vimrc)
 |g:winresizer_vert_resize|10|The change width of window size when `left` or `right` key is pressed|
 |g:winresizer_horiz_resize|3|The change height of window size when `down` or `up` key is pressed|
 |g:winresizer_start_key|`Ctrl + e`|Start window resize mode|
-|g:winresizer_gui_start_key|`Ctrl + a`|Start window resize mode|
+|g:winresizer_gui_start_key|`Ctrl + a`|Start window resize mode (in GUI Vim)|
 |g:winresizer_keycode_left|104(`h`)|Expand window size to left|
 |g:winresizer_keycode_right|108(`l`)|Expand window size to right|
 |g:winresizer_keycode_down|106(`j`)|Expand window size to down|
