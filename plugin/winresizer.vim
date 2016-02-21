@@ -123,7 +123,7 @@ fun! s:startReize(commands)
 
   while 1
 
-    echo '[window resize mode]... "Enter": OK , "q": Cancel'
+    echo '[window resize mode]... "'.s:label_finish.'": OK , "'.s:label_cancel.'": Cancel'
     let c = getchar()
 
     if c == s:codeList['left'] "h
@@ -173,6 +173,20 @@ fun! s:getOppositeSign(sign)
   endif
   return sign
 endfun
+
+fun! s:getKeyAlias(code)
+  if a:code == 13
+    let alias = "Enter"
+  elseif a:code == 32
+    let alias = "Space"
+  else
+    let alias = nr2char(a:code, 1)
+  end
+  return alias
+endfun
+
+let s:label_finish = s:getKeyAlias(g:winresizer_keycode_finish)
+let s:label_cancel = s:getKeyAlias(g:winresizer_keycode_cancel)
 
 
 let &cpo = s:save_cpo
