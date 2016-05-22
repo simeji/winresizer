@@ -180,7 +180,7 @@ fun! s:getKeyAlias(code)
   elseif a:code == 32
     let alias = "Space"
   else
-    let alias = nr2char(a:code, 1)
+    let alias = nr2char(a:code)
   end
   return alias
 endfun
