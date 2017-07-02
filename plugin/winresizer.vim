@@ -19,6 +19,8 @@
 " k : expand window size to up
 " l : expand window size to right
 " e : switch to move mode
+" f : change to focus mode
+" w : change to move mode
 " q : cancel resize window and escape [window resize mode]
 " Enter : fix and escape 
 "
@@ -28,6 +30,8 @@
 " k : move window up
 " l : move window right
 " e : switch to focus mode
+" f : change to focus mode
+" r : change to resize mode
 " q : cancel move window and escape [window move mode]
 " Enter : fix and escape 
 "
@@ -37,8 +41,10 @@
 " k : move focus to window above
 " l : move focus to right window
 " e : switch to resize mode
+" r : change to resize mode
+" w : change to move mode
 " q : cancel move window and escape [window focus mode]
-" Enter : fix and escape 
+" Enter : fix and change to resize mode 
 
 if exists("g:loaded_winresizer")
   finish
@@ -92,7 +98,7 @@ let g:winresizer_keycode_right = get(g:, 'winresizer_keycode_right', s:default_k
 let g:winresizer_keycode_finish = get(g:, 'winresizer_keycode_finish', s:default_keycode['finish'])
 let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default_keycode['cancel'])
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
-let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_enter', s:default_keycode['enter'])
+let g:winresizer_keycode_enter = get(g:, 'winresizer_keycode_enter', s:default_keycode['enter'])
 let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode', s:default_keycode['mode'])
 
 " if <ESC> key downed, finish resize mode
@@ -112,7 +118,7 @@ let s:codeList = {
 
 exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
 
-com! WinResizerStartResize call s:startReize(s:resizeCommands())
+com! WinResizerStartResize call s:startReize(s:tuiResizeCommands())
 com! WinResizerStartMove call s:startReize(s:moveCommands())
 com! WinResizerStartFocus call s:startReize(s:focusCommands())
 
@@ -153,14 +159,6 @@ fun! s:tuiResizeCommands()
 
 endfun
 
-fun! s:resizeCommands()
-  if has("gui_running") && g:winresizer_gui_enable != 0
-    return s:guiResizeCommands()
-  else
-    return s:tuiResizeCommands()
-  endif
-endfun
-
 fun! s:moveCommands()
 
   let commands = {
@@ -197,42 +195,42 @@ fun! s:startReize(commands)
     return
   endif
 
-  let s:commands = a:commands
+  let l:commands = a:commands
 
   while 1
 
-    echo '[window ' . s:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Mode , "'.s:label_cancel.'": Cancel '
+    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Mode , "'.s:label_cancel.'": Cancel '
 
     let c = getchar()
 
     if c == s:codeList['left'] "h
-      exe s:commands['left']
+      exe l:commands['left']
     elseif c == s:codeList['down'] "j
-      exe s:commands['down']
+      exe l:commands['down']
     elseif c == s:codeList['up'] "k
-      exe s:commands['up']
+      exe l:commands['up']
     elseif c == s:codeList['right'] "l
-      exe s:commands['right']
+      exe l:commands['right']
     elseif c == s:codeList['focus'] "f
-      let s:commands = s:focusCommands()
+      let l:commands = s:focusCommands()
     elseif c == s:codeList['move'] "w
-      let s:commands = s:moveCommands()
+      let l:commands = s:moveCommands()
     elseif c == s:codeList['resize'] "r
-      let s:commands = s:resizeCommands()
-    elseif c == s:codeList['enter'] && s:commands['mode'] == "focus"
-      let s:commands = s:resizeCommands()
+      let l:commands = s:tuiResizeCommands()
+    elseif c == s:codeList['enter'] && l:commands['mode'] == "focus"
+      let l:commands = s:tuiResizeCommands()
     elseif c == g:winresizer_keycode_cancel "q
-      exe s:commands['cancel']
+      exe l:commands['cancel']
       redraw
       echo "Canceled!"
       break
     elseif c == s:codeList['mode']
-      if s:commands['mode'] == 'move'
-        let s:commands = s:focusCommands()
-      elseif s:commands['mode'] == 'focus'
-        let s:commands = s:resizeCommands()
+      if l:commands['mode'] == 'move'
+        let l:commands = s:focusCommands()
+      elseif l:commands['mode'] == 'focus'
+        let l:commands = s:tuiResizeCommands()
       else
-        let s:commands = s:moveCommands()
+        let l:commands = s:moveCommands()
       endif
     elseif c == g:winresizer_keycode_finish || (g:winresizer_finish_with_escape == 1 && c == g:winresizer_keycode_escape)
       redraw
