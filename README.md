@@ -10,7 +10,19 @@ The WindowResize mode makes your operation more quickly and more naturally.
 
 ### For terminal vim
 
+#### Resize mode
+
 ![demo-for-terminal](https://raw.github.com/wiki/simeji/winresizer/images/demo-for-terminal.gif)
+
+#### Window Move mode
+
+You can move windows.  
+![demo-move](https://raw.github.com/wiki/simeji/winresizer/images/demo-move.gif)
+
+#### Change the focus & resize window
+
+Focus mode -> Resize mode  
+![demo-focus](https://raw.github.com/wiki/simeji/winresizer/images/demo-focus.gif)
 
 ### For MacVim(gui vim)
 
@@ -30,6 +42,8 @@ The WindowResize mode makes your operation more quickly and more naturally.
 4. If you cancel window resize, then press "q" key.
    You will get window size of before change
 
+5. You can change the mode if you press "e" in 'window resize mode'
+
 ## Customize options
 
 You can change setting and key mappings by using below options.(in your vimrc)
@@ -47,6 +61,10 @@ You can change setting and key mappings by using below options.(in your vimrc)
 |g:winresizer_keycode_right|108(`l`)|Expand window size to right|
 |g:winresizer_keycode_down|106(`j`)|Expand window size to down|
 |g:winresizer_keycode_up|107(`k`)|Expand window size to up|
+|g:winresizer_keycode_focus|102(`f`)|Change a mode to `Focus mode`|
+|g:winresizer_keycode_move|109(`m`)|Change a mode to `Move mode`|
+|g:winresizer_keycode_resize|114(`r`)|Change a mode to `Resize mode`|
+|g:winresizer_keycode_mode|101(`e`)|Rotate a mode (Resize -> Move -> Focus -> Resize ...)|
 |g:winresizer_keycode_finish|13(`Enter`)|Fix and escape from window resize mode|
 |g:winresizer_keycode_cancel|113(`q`)|Cancel and quit window resize mode|
 
