@@ -20,7 +20,7 @@
 " l : expand window size to right
 " e : switch to move mode
 " f : change to focus mode
-" w : change to move mode
+" m : change to move mode
 " q : cancel resize window and escape [window resize mode]
 " Enter : fix and escape 
 "
@@ -42,7 +42,7 @@
 " l : move focus to right window
 " e : switch to resize mode
 " r : change to resize mode
-" w : change to move mode
+" m : change to move mode
 " q : cancel move window and escape [window focus mode]
 " Enter : fix and change to resize mode 
 
@@ -73,7 +73,7 @@ let g:winresizer_horiz_resize = get(g:, 'winresizer_horiz_resize', 3)
 
 " resize mode key mapping
 let s:default_keycode = {
-             \           'move'  :'119',
+             \           'move'  :'109',
              \           'focus' :'102',
              \           'resize' :'114',
              \           'left'  :'104',
@@ -118,13 +118,13 @@ let s:codeList = {
 
 exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
 
-com! WinResizerStartResize call s:startReize(s:tuiResizeCommands())
-com! WinResizerStartMove call s:startReize(s:moveCommands())
-com! WinResizerStartFocus call s:startReize(s:focusCommands())
+com! WinResizerStartResize call s:startResize(s:tuiResizeCommands())
+com! WinResizerStartMove call s:startResize(s:moveCommands())
+com! WinResizerStartFocus call s:startResize(s:focusCommands())
 
 if has("gui_running") && g:winresizer_gui_enable != 0
   exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
-  com! WinResizerStartResizeGUI call s:startReize(s:guiResizeCommands())
+  com! WinResizerStartResizeGUI call s:startResize(s:guiResizeCommands())
 endif
 
 fun! s:guiResizeCommands()
@@ -189,7 +189,7 @@ fun! s:focusCommands()
 
 endfun
 
-fun! s:startReize(commands)
+fun! s:startResize(commands)
 
   if g:winresizer_enable == 0
     return
@@ -199,7 +199,7 @@ fun! s:startReize(commands)
 
   while 1
 
-    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Mode , "'.s:label_cancel.'": Cancel '
+    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_cancel.'": Cancel '
 
     let c = getchar()
 
