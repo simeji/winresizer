@@ -16,12 +16,12 @@ The WindowResize mode makes your operation more quickly and more naturally.
 
 #### Window Move mode
 
-You can move windows.
+You can move windows.  
 ![demo-move](https://raw.github.com/wiki/simeji/winresizer/images/demo-move.gif)
 
 #### Change the focus & resize window
 
-Focus mode -> Resize mode
+Focus mode -> Resize mode  
 ![demo-focus](https://raw.github.com/wiki/simeji/winresizer/images/demo-focus.gif)
 
 ### For MacVim(gui vim)
