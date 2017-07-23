@@ -113,8 +113,8 @@ Overview:~
   |g:winresizer_keycode_move| ............. Key for move mode
   |g:winresizer_keycode_resize| ........... Key for resize mode
   |g:winresizer_keycode_mode| ............. Key for mode switch
-  |g:winresizer_keycode_finish| .......... Key for finish
-  |g:winresizer_keycode_cancel| .......... Key for cancel
+  |g:winresizer_keycode_finish| ........... Key for finish
+  |g:winresizer_keycode_cancel| ........... Key for cancel
 
 ------------------------------------------------------------------------------
 Detailed description and default values:~
