@@ -1,0 +1,232 @@
+*winresizer.txt*  Easily resize, focus, and move your windows
+*winresizer* *vim-winresizer*
+
+                       _                 _                                   ~
+                 _ _ _|_|___ ___ ___ ___|_|___ ___ ___                       ~
+                | | | | |   |  _| -_|_ -| |- _| -_|  _|                      ~
+                |_____|_|_|_|_| |___|___|_|___|___|_|                        ~
+
+==============================================================================
+CONTENTS                                               *winresizer-contents*
+
+   01. Intro ............................................ |winresizer-intro|
+   02. Usage ............................................ |winresizer-usage|
+   03. Mappings ...................................... |winresizer-mappings|
+   04. Customization ............................ |winresizer-customization|
+   05. License ........................................ |winresizer-license|
+   06. Bugs .............................................. |winresizer-bugs|
+   07. Contributing .............................. |winresizer-contributing|
+   08. Credits ....................................... .|winresizer-credits|
+
+==============================================================================
+INTRODUCTION                                              *winresizer-intro*
+
+Press <C-e> to get started using winresizer. You will see a status-line
+message at the bottom of the screen that looks like this: >
+  [window resize mode]... "Enter": OK , "e": Change mode , "q": Cancel
+<
+Now press the `h`,`j`,`k`, and `l` keys to resize the window! They work the
+same as the keys do in insert mode, moving in the directions you expect.
+
+You can press <Enter> to accept the change or <q> to cancel. >
+
+  Finished!
+<
+And voilà, that's it! That's all you need to know to get started using
+winresizer.
+
+==============================================================================
+USAGE                                                     *winresizer-usage*
+
+window mode      how to start~
+-----------------------------
+  |win-resize|       * <C-e>
+                   * <C-e> r
+                   * :WinResizerStartResize
+  |win-move|         * <C-e> e
+                   * <C-e> m
+                   * :WinResizerStartMove
+  |win-focus|        * <C-e> ee
+                   * <C-e> f
+                   * :WinResizerStartFocus
+
+*win-resize*     Use the `h`,`j`,`k`, and `l` keys to resize the active window.
+
+*win-move*       Use the `h`,`j`,`k`, and `l` keys to move the active window
+               around the layout, without changing the size of the layout.
+               Effectively changes the buffer being viewed in a window.
+
+*win-focus*      Use the `h`,`j`,`k`, and `l` keys to change which window is
+               the active one.
+
+==============================================================================
+MAPPINGS                                               *winresizer-mappings*
+
+<C-e>                                                     *winresizer-<C-e>*
+  :WinResizerStartResize
+  Start a winresizer session.
+
+<C-a>                                                     *winresizer-<C-a>*
+  Start a winresizer session in |GUI| Vim.
+
+------------------------------------------------------------------------------
+Once inside winresizer session:
+
+  e                                                           *winresizer-e*
+    Cycle through modes (|win-resize|, |win-move|, |win-focus|).
+
+  m                                                           *winresizer-m*
+    Switch to |win-move| mode.
+
+  f                                                           *winresizer-f*
+    Switch to |win-focus| mode.
+
+  r                                                           *winresizer-r*
+    Switch to |win-resize| mode.
+
+  <Enter>                                               *winresizer-<Enter>*
+    Accept size/move/focus change.
+
+  <Esc>                                                   *winresizer-<Esc>*
+    Accept size/move/focus change.
+    See also |g:winresizer_finish_with_escape|.
+  q                                                           *winresizer-q*
+    Cancel size/move/focus change.
+
+==============================================================================
+CUSTOMIZATION                                     *winresizer-customization*
+
+Overview:~
+
+  |g:winresizer_enable| ................... Use winresizer
+  |g:winresizer_gui_enable| ............... Use winresizer in GUI
+  |g:winresizer_finish_with_escape| ....... Finish with <Esc>
+  |g:winresizer_vert_resize| .............  Change in vertical size
+  |g:winresizer_horiz_resize| ............. Change in horizontal size
+  |g:winresizer_start_key| ................ Key to trigger winresizer
+  |g:winresizer_gui_start_key| ............ Key to trigger winresizer in GUI
+  |g:winresizer_keycode_left| ............. Key for left
+  |g:winresizer_keycode_right| ............ Key for right
+  |g:winresizer_keycode_down| ............. Key for down
+  |g:winresizer_keycode_up| ............... Key for up
+  |g:winresizer_keycode_focus| ............ Key for focus mode
+  |g:winresizer_keycode_move| ............. Key for move mode
+  |g:winresizer_keycode_resize| ........... Key for resize mode
+  |g:winresizer_keycode_mode| ............. Key for mode switch
+  |g:winresizer_keycode_finish| ........... Key for finish
+  |g:winresizer_keycode_cancel| ........... Key for cancel
+
+------------------------------------------------------------------------------
+Detailed description and default values:~
+
+                                                       *g:winresizer_enable*
+* Enable winresizer >
+  let g:winresizer_enable=1
+<
+                                                   *g:winresizer_gui_enable*
+* Enable winresizer in the GUI >
+  let g:winresizer_gui_enable=0
+<
+                                           *g:winresizer_finish_with_escape*
+* Finish with <Esc> if this value is 1 >
+  let g:winresizer_finish_with_escape=1
+<
+                                                  *g:winresizer_vert_resize*
+* The width to add or subtract when the `left` or `right` key is pressed >
+  let g:winresizer_vert_resize=10
+<
+                                                 *g:winresizer_horiz_resize*
+* The height to add or subtract when the `up` or `down` key is pressed >
+  let g:winresizer_horiz_resize=3
+<
+                                                    *g:winresizer_start_key*
+* The key used to start winresizer >
+  let g:winresizer_start_key=<C-e>
+<
+                                                *g:winresizer_gui_start_key*
+* The key used to start winresizer in the GUI >
+  let g:winresizer_gui_start_key=<C-a>
+<
+                                                 *g:winresizer_keycode_left*
+* The keycode used as the `left` or `h` key >
+  let g:winresizer_keycode_left=104 " h
+<
+                                                *g:winresizer_keycode_right*
+* The keycode used as the `right` or `l` key >
+  let g:winresizer_keycode_right=108 " l
+<
+                                                 *g:winresizer_keycode_down*
+* The keycode used as the `down` or `j` key >
+  let g:winresizer_keycode_down=106 " j
+<
+                                                   *g:winresizer_keycode_up*
+* The keycode used as the `up` or `k` key >
+  let g:winresizer_keycode_up=107 " k
+<
+                                                *g:winresizer_keycode_focus*
+* The keycode used as the `focus` or `f` key >
+  let g:winresizer_keycode_focus=102 " f
+<
+                                                 *g:winresizer_keycode_move*
+* The keycode used as the `move` or `m` key >
+  let g:winresizer_keycode_move=109 " m
+<
+                                               *g:winresizer_keycode_resize*
+* The keycode used as the `resize` or `r` key >
+  let g:winresizer_keycode_resize=114 " r
+<
+                                                 *g:winresizer_keycode_mode*
+* The keycode used as the `mode` or `e` key >
+  let g:winresizer_keycode_down=101 " e
+<
+                                               *g:winresizer_keycode_finish*
+* The keycode used as the `finish` or <Enter> key >
+  let g:winresizer_keycode_down=13 " <Enter>
+<
+                                               *g:winresizer_keycode_cancel*
+* The keycode used as the `cancel` or `q` key >
+  let g:winresizer_keycode_down=113 " q
+<
+==============================================================================
+LICENSE                                                 *winresizer-license*
+
+MIT License.  Copyright © 2013 simeji.
+Full text available at
+https://github.com/simeji/winresizer/blob/master/LICENSE
+
+==============================================================================
+BUGS                                                       *winresizer-bugs*
+
+At the time of this writing, no major bugs have yet been found.
+
+If you find one and want to report it, you can do so at
+https://github.com/simeji/winresizer/issues
+
+==============================================================================
+CONTRIBUTING                                       *winresizer-contributing*
+
+Do you want to submit a new feature, bugfix, or otherwise hack on winresizer?
+Submit pull requests to
+https://github.com/simeji/winresizer/pulls
+
+See the code for style guidelines.
+
+==============================================================================
+CREDITS                                                 *winresizer-credits*
+
+Originally developed by simeji <github.com/simeji>.
+
+Git repository:       https://github.com/simeji/winresizer
+
+-------------------------------------------------------------------------------
+Thanks to everyone that has submitted ideas, bug reports or helped debugging on
+gibhub.
+
+Special thanks:~
+
+    * Horacio Sanson <github.com/hsanson>
+    * Dario Sneidermanis <github.com/esneider>
+    * jim <github.com/jimsei>
+    * David Knoble <github.com/benknoble>
+
+ vim:tw=78:ts=8:ft=help:norl:
