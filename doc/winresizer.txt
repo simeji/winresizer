@@ -177,15 +177,15 @@ Detailed description and default values:~
 <
                                                  *g:winresizer_keycode_mode*
 * The keycode used as the `mode` or `e` key >
-  let g:winresizer_keycode_down=101 " e
+  let g:winresizer_keycode_mode=101 " e
 <
                                                *g:winresizer_keycode_finish*
 * The keycode used as the `finish` or <Enter> key >
-  let g:winresizer_keycode_down=13 " <Enter>
+  let g:winresizer_keycode_finish=13 " <Enter>
 <
                                                *g:winresizer_keycode_cancel*
 * The keycode used as the `cancel` or `q` key >
-  let g:winresizer_keycode_down=113 " q
+  let g:winresizer_keycode_cancel=113 " q
 <
 ==============================================================================
 LICENSE                                                 *winresizer-license*
