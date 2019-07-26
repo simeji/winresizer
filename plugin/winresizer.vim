@@ -116,14 +116,18 @@ let s:codeList = {
         \  'mode' : g:winresizer_keycode_mode,
         \}
 
-exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
+if g:winresizer_enable != 0 && !empty(g:winresizer_start_key)
+  exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
+endif
 
 com! WinResizerStartResize call s:startResize(s:tuiResizeCommands())
 com! WinResizerStartMove call s:startResize(s:moveCommands())
 com! WinResizerStartFocus call s:startResize(s:focusCommands())
 
-if has("gui_running") && g:winresizer_gui_enable != 0
-  exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
+if has("gui_running") && g:winresizer_gui_enable != 0 && g:winresizer_enable != 0
+  if !empty(g:winresizer_gui_start_key)
+    exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
+  endif
   com! WinResizerStartResizeGUI call s:startResize(s:guiResizeCommands())
 endif
 
