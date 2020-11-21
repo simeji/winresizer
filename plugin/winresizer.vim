@@ -217,8 +217,6 @@ fun! s:startResize(commands)
       let l:commands = s:moveCommands()
     elseif c == s:codeList['resize'] "r
       let l:commands = s:tuiResizeCommands()
-    elseif c == s:codeList['enter'] && l:commands['mode'] == "focus"
-      let l:commands = s:tuiResizeCommands()
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']
       redraw
