@@ -47,6 +47,7 @@ Focus mode -> Resize mode
 ## Customize options
 
 You can change setting and key mappings by using below options.(in your vimrc)
+The key values are ASCII values. You can find a list of mappings [here](https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html).
 
 |variable name|default value|description|
 |:-----------|:---------:|:----------|
