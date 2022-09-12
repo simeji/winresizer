@@ -80,6 +80,9 @@ let s:default_keycode = {
              \           'down'   : '106',
              \           'up'     : '107',
              \           'right'  : '108',
+             \           'hfull'  : '95',
+             \           'vfull'  : '124',
+             \           'sizeeq' : '61',
              \           'finish' : '13',
              \           'cancel' : '113',
              \           'enter'  : '13',
@@ -95,6 +98,10 @@ let g:winresizer_keycode_down   = get(g:, 'winresizer_keycode_down',   s:default
 let g:winresizer_keycode_up     = get(g:, 'winresizer_keycode_up',     s:default_keycode['up'])
 let g:winresizer_keycode_right  = get(g:, 'winresizer_keycode_right',  s:default_keycode['right'])
 
+let g:winresizer_keycode_hfull  = get(g:, 'winresizer_keycode_hfull',  s:default_keycode['hfull'])
+let g:winresizer_keycode_vfull  = get(g:, 'winresizer_keycode_vfull',  s:default_keycode['vfull'])
+let g:winresizer_keycode_sizeeq = get(g:, 'winresizer_keycode_sizeeq', s:default_keycode['sizeeq'])
+
 let g:winresizer_keycode_finish = get(g:, 'winresizer_keycode_finish', s:default_keycode['finish'])
 let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default_keycode['cancel'])
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
@@ -109,6 +116,9 @@ let s:codeList = {
         \  'down'   : g:winresizer_keycode_down,
         \  'up'     : g:winresizer_keycode_up,
         \  'right'  : g:winresizer_keycode_right,
+        \  'hfull'  : g:winresizer_keycode_hfull,
+        \  'vfull'  : g:winresizer_keycode_vfull,
+        \  'sizeeq' : g:winresizer_keycode_sizeeq,
         \  'focus'  : g:winresizer_keycode_focus,
         \  'move'   : g:winresizer_keycode_move,
         \  'resize' : g:winresizer_keycode_resize,
@@ -135,6 +145,9 @@ fun! s:guiResizeCommands()
       \  'right'  : 'let &columns = &columns + ' . g:winresizer_vert_resize,
       \  'up'     : 'let &lines = &lines - ' . g:winresizer_horiz_resize,
       \  'down'   : 'let &lines = &lines + ' . g:winresizer_horiz_resize,
+      \  'hfull'  : 'resize',
+      \  'vfull'  : 'vert resize',
+      \  'sizeeq' : 'wincmd =',
       \  'cancel' : 'let &columns = ' . &columns . '|let &lines = ' . &lines . '|',
       \}
 
@@ -152,6 +165,9 @@ fun! s:tuiResizeCommands()
         \  'right'  : ':vertical resize ' . behavior['right'] . g:winresizer_vert_resize,
         \  'up'     : ':resize ' . behavior['up']   . g:winresizer_horiz_resize,
         \  'down'   : ':resize ' . behavior['down'] . g:winresizer_horiz_resize,
+        \  'hfull'  : ':resize',
+        \  'vfull'  : ':vert resize',
+        \  'sizeeq' : ':wincmd =',
         \  'cancel' : winrestcmd(),
         \}
 
@@ -182,6 +198,9 @@ fun! s:focusCommands()
         \  'right'  : "normal! \<c-w>l",
         \  'up'     : "normal! \<c-w>k",
         \  'down'   : "normal! \<c-w>j",
+        \  'hfull'  : 'resize',
+        \  'vfull'  : 'vert resize',
+        \  'sizeeq' : 'wincmd =',
         \  'cancel' : winrestcmd(),
         \}
 
@@ -211,6 +230,12 @@ fun! s:startResize(commands)
       exe l:commands['up']
     elseif c == s:codeList['right'] "l
       exe l:commands['right']
+    elseif c == s:codeList['hfull'] && exists("l:commands['hfull']") "_
+      exe l:commands['hfull']
+    elseif c == s:codeList['vfull'] && exists("l:commands['vfull']") "|
+      exe l:commands['vfull']
+    elseif c == s:codeList['sizeeq'] && exists("l:commands['sizeeq']") "=
+      exe l:commands['sizeeq']
     elseif c == s:codeList['focus'] "f
       let l:commands = s:focusCommands()
     elseif c == s:codeList['move'] "w
