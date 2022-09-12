@@ -73,47 +73,47 @@ let g:winresizer_horiz_resize = get(g:, 'winresizer_horiz_resize', 3)
 
 " resize mode key mapping
 let s:default_keycode = {
-             \           'move'  :'109',
-             \           'focus' :'102',
-             \           'resize' :'114',
-             \           'left'  :'104',
-             \           'down'  :'106',
-             \           'up'    :'107',
-             \           'right' :'108',
-             \           'finish':'13',
-             \           'cancel':'113',
-             \           'enter' :'13',
-             \           'escape':'27',
-             \           'mode'  :'101',
+             \           'move'   : '109',
+             \           'focus'  : '102',
+             \           'resize' : '114',
+             \           'left'   : '104',
+             \           'down'   : '106',
+             \           'up'     : '107',
+             \           'right'  : '108',
+             \           'finish' : '13',
+             \           'cancel' : '113',
+             \           'enter'  : '13',
+             \           'escape' : '27',
+             \           'mode'   : '101',
              \          }
 
-let g:winresizer_keycode_focus = get(g:, 'winresizer_keycode_focus', s:default_keycode['focus'])
-let g:winresizer_keycode_move  = get(g:, 'winresizer_keycode_move', s:default_keycode['move'])
+let g:winresizer_keycode_focus  = get(g:, 'winresizer_keycode_focus',  s:default_keycode['focus'])
+let g:winresizer_keycode_move   = get(g:, 'winresizer_keycode_move',   s:default_keycode['move'])
 let g:winresizer_keycode_resize = get(g:, 'winresizer_keycode_resize', s:default_keycode['resize'])
-let g:winresizer_keycode_left  = get(g:, 'winresizer_keycode_left', s:default_keycode['left'])
-let g:winresizer_keycode_down  = get(g:, 'winresizer_keycode_down',  s:default_keycode['down'])
-let g:winresizer_keycode_up    = get(g:, 'winresizer_keycode_up',    s:default_keycode['up'])
-let g:winresizer_keycode_right = get(g:, 'winresizer_keycode_right', s:default_keycode['right'])
+let g:winresizer_keycode_left   = get(g:, 'winresizer_keycode_left',   s:default_keycode['left'])
+let g:winresizer_keycode_down   = get(g:, 'winresizer_keycode_down',   s:default_keycode['down'])
+let g:winresizer_keycode_up     = get(g:, 'winresizer_keycode_up',     s:default_keycode['up'])
+let g:winresizer_keycode_right  = get(g:, 'winresizer_keycode_right',  s:default_keycode['right'])
 
 let g:winresizer_keycode_finish = get(g:, 'winresizer_keycode_finish', s:default_keycode['finish'])
 let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default_keycode['cancel'])
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
-let g:winresizer_keycode_enter = get(g:, 'winresizer_keycode_enter', s:default_keycode['enter'])
-let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode', s:default_keycode['mode'])
+let g:winresizer_keycode_enter  = get(g:, 'winresizer_keycode_enter',  s:default_keycode['enter'])
+let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode',   s:default_keycode['mode'])
 
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
 
 let s:codeList = {
-        \  'left' : g:winresizer_keycode_left,
-        \  'down' : g:winresizer_keycode_down,
-        \  'up'   : g:winresizer_keycode_up,
-        \  'right': g:winresizer_keycode_right,
-        \  'focus': g:winresizer_keycode_focus,
-        \  'move': g:winresizer_keycode_move,
-        \  'resize': g:winresizer_keycode_resize,
-        \  'enter': g:winresizer_keycode_enter,
-        \  'mode' : g:winresizer_keycode_mode,
+        \  'left'   : g:winresizer_keycode_left,
+        \  'down'   : g:winresizer_keycode_down,
+        \  'up'     : g:winresizer_keycode_up,
+        \  'right'  : g:winresizer_keycode_right,
+        \  'focus'  : g:winresizer_keycode_focus,
+        \  'move'   : g:winresizer_keycode_move,
+        \  'resize' : g:winresizer_keycode_resize,
+        \  'enter'  : g:winresizer_keycode_enter,
+        \  'mode'   : g:winresizer_keycode_mode,
         \}
 
 exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
