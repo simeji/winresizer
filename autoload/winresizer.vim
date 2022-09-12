@@ -62,4 +62,15 @@ fun! winresizer#swapWindow(to)
   exe a:to ."wincmd w"
 endfun
 
+fun! winresizer#winClose()
+  try
+    close
+  catch
+    echohl ErrorMsg
+    echomsg v:exception
+    sleep 1   " XXX: Not to hide the message by winresizer prompt
+    echohl None
+  endtry
+endfun
+
 let &cpo = s:save_cpo
