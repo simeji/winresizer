@@ -73,4 +73,38 @@ fun! winresizer#winClose()
   endtry
 endfun
 
+fun! winresizer#tabNext(tabOffset)
+    let l:tab = a:tabOffset + tabpagenr()
+
+    if l:tab < 1 || l:tab > tabpagenr('$')
+        return
+    endif
+
+    try
+        exec 'tabn ' . l:tab
+    catch
+        echohl ErrorMsg
+        echomsg v:exception
+        sleep 1   " XXX: Not to hide the message by winresizer prompt
+        echohl None
+    endtry
+endfun
+
+fun! winresizer#tabMove(tabOffset)
+    let l:tab = a:tabOffset + (a:tabOffset <= 0 ? -1 : 0) + tabpagenr()
+
+    if l:tab < 0 || l:tab > tabpagenr('$')
+        return
+    endif
+
+    try
+        exec 'tabm ' . l:tab
+    catch
+        echohl ErrorMsg
+        echomsg v:exception
+        sleep 1   " XXX: Not to hide the message by winresizer prompt
+        echohl None
+    endtry
+endfun
+
 let &cpo = s:save_cpo

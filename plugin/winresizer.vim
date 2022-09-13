@@ -84,6 +84,8 @@ let s:default_keycode = {
              \           'vfull'  : '124',
              \           'sizeeq' : '61',
              \           'close'  : '67',
+             \           'tabl'   : '74',
+             \           'tabr'   : '75',
              \           'finish' : '13',
              \           'cancel' : '113',
              \           'enter'  : '13',
@@ -105,6 +107,9 @@ let g:winresizer_keycode_sizeeq = get(g:, 'winresizer_keycode_sizeeq', s:default
 
 let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close',  s:default_keycode['close'])
 
+let g:winresizer_keycode_tabl   = get(g:, 'winresizer_keycode_tabl',   s:default_keycode['tabl'])
+let g:winresizer_keycode_tabr   = get(g:, 'winresizer_keycode_tabr',   s:default_keycode['tabr'])
+
 let g:winresizer_keycode_finish = get(g:, 'winresizer_keycode_finish', s:default_keycode['finish'])
 let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default_keycode['cancel'])
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
@@ -123,6 +128,8 @@ let s:codeList = {
         \  'vfull'  : g:winresizer_keycode_vfull,
         \  'sizeeq' : g:winresizer_keycode_sizeeq,
         \  'close'  : g:winresizer_keycode_close,
+        \  'tabl'   : g:winresizer_keycode_tabl,
+        \  'tabr'   : g:winresizer_keycode_tabr,
         \  'focus'  : g:winresizer_keycode_focus,
         \  'move'   : g:winresizer_keycode_move,
         \  'resize' : g:winresizer_keycode_resize,
@@ -153,6 +160,8 @@ fun! s:guiResizeCommands()
       \  'vfull'  : 'vert resize',
       \  'sizeeq' : 'wincmd =',
       \  'close'  : 'call winresizer#winClose()',
+      \  'tabl'   : 'call winresizer#tabNext(-1)',
+      \  'tabr'   : 'call winresizer#tabNext(+1)',
       \  'cancel' : 'let &columns = ' . &columns . '|let &lines = ' . &lines . '|',
       \}
 
@@ -174,6 +183,8 @@ fun! s:tuiResizeCommands()
         \  'vfull'  : ':vert resize',
         \  'sizeeq' : ':wincmd =',
         \  'close'  : ':call winresizer#winClose()',
+        \  'tabl'   : ':call winresizer#tabNext(-1)',
+        \  'tabr'   : ':call winresizer#tabNext(+1)',
         \  'cancel' : winrestcmd(),
         \}
 
@@ -190,6 +201,8 @@ fun! s:moveCommands()
         \  'up'     : ":call winresizer#swapTo('up')",
         \  'down'   : ":call winresizer#swapTo('down')",
         \  'close'  : ':call winresizer#winClose()',
+        \  'tabl'   : ':call winresizer#tabMove(-1)',
+        \  'tabr'   : ':call winresizer#tabMove(+1)',
         \  'cancel' : winrestcmd(),
         \}
 
@@ -209,6 +222,8 @@ fun! s:focusCommands()
         \  'vfull'  : 'vert resize',
         \  'sizeeq' : 'wincmd =',
         \  'close'  : 'call winresizer#winClose()',
+        \  'tabl'   : 'call winresizer#tabNext(-1)',
+        \  'tabr'   : 'call winresizer#tabNext(+1)',
         \  'cancel' : winrestcmd(),
         \}
 
@@ -248,6 +263,10 @@ fun! s:startResize(commands)
       exe l:commands['close']
     elseif c == s:codeList['focus'] "f
       let l:commands = s:focusCommands()
+    elseif c == s:codeList['tabl'] && exists("l:commands['tabl']") "J
+      exe l:commands['tabl']
+    elseif c == s:codeList['tabr'] && exists("l:commands['tabr']") "K
+      exe l:commands['tabr']
     elseif c == s:codeList['move'] "w
       let l:commands = s:moveCommands()
     elseif c == s:codeList['resize'] "r
