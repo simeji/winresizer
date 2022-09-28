@@ -52,13 +52,17 @@ fun! winresizer#swapTo(direct)
 endfun
 
 fun! winresizer#swapWindow(to)
-  let curNum = winnr()
-  let curBuf = bufnr( "%" )
+  let curNum   = winnr()
+  let curBuf   = bufnr( "%" )
+  let curMatch = getmatches(curNum)
   exe a:to . "wincmd w"
-  let toBuf  = bufnr( "%" )
+  let toBuf    = bufnr( "%" )
+  let toMatch  = getmatches(a:to)
   exe 'hide buf' curBuf
   exe curNum . "wincmd w"
   exe 'hide buf' toBuf
+  call setmatches(curMatch, a:to)
+  call setmatches(toMatch,  curNum)
   exe a:to ."wincmd w"
 endfun
 
