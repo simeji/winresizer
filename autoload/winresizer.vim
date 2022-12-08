@@ -13,7 +13,7 @@ fun! winresizer#getEdgeInfo()
   let chk_direct = ['left', 'down', 'up', 'right']
   let result = {}
   for direct in chk_direct
-    exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
+    silent! exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
   endfor
   return result
 endfun
