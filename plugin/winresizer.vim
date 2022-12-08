@@ -211,9 +211,9 @@ fun! s:startResize(commands)
       exe l:commands['up']
     elseif c == s:codeList['right'] "l
       exe l:commands['right']
-    elseif c == s:codeList['focus'] "f
+    elseif c == s:codeList['focus'] && getcmdwintype() ==# '' "f
       let l:commands = s:focusCommands()
-    elseif c == s:codeList['move'] "w
+    elseif c == s:codeList['move'] && getcmdwintype() ==# '' "w
       let l:commands = s:moveCommands()
     elseif c == s:codeList['resize'] "r
       let l:commands = s:tuiResizeCommands()
@@ -224,7 +224,7 @@ fun! s:startResize(commands)
       redraw
       echo "Canceled!"
       break
-    elseif c == s:codeList['mode']
+    elseif c == s:codeList['mode'] && getcmdwintype() ==# ''
       if l:commands['mode'] == 'move'
         let l:commands = s:focusCommands()
       elseif l:commands['mode'] == 'focus'
