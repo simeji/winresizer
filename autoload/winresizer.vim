@@ -25,10 +25,14 @@ fun! winresizer#canMoveCursorFromCurrentWindow(direct)
   elseif index(values(map_direct), a:direct) != -1
     let direct = a:direct
   endif
+  let winwidth  = &winwidth
+  let winheight = &winheight
+  set winwidth=1 winheight=1
   let from = winnr()
   exe "wincmd " . direct
   let to = winnr()
   exe from . "wincmd w"
+  exe "set winwidth=" . winwidth " winheight=" . winheight
   return from != to
 endfun
 
