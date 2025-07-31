@@ -197,6 +197,10 @@ fun! s:startResize(commands)
 
   let l:commands = a:commands
 
+  " XXX: Disable unexpected search highlight.
+  let l:hlsearch  = &hlsearch
+  set nohlsearch
+
   while 1
 
     echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_cancel.'": Cancel '
@@ -239,6 +243,9 @@ fun! s:startResize(commands)
     endif
     redraw
   endwhile
+
+  " XXX: Rollback the hlsearch setting.
+  exec 'set ' . (l:hlsearch ? '' : 'no') . 'hlsearch'
 endfun
 
 " Decide behavior of up, down, left and right key .
