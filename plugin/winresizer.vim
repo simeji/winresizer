@@ -199,6 +199,12 @@ fun! s:startResize(commands)
 
   let l:commands = a:commands
 
+  " Suppress search highlights during resize operations.
+  " Some window commands (e.g. wincmd) trigger a redraw that re-enables
+  " highlights even after :nohl, so we disable the option for the duration.
+  let l:hlsearch = &hlsearch
+  set nohlsearch
+
   while 1
 
     echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_close.'": Close win , "'.s:label_cancel.'": Cancel '
@@ -250,6 +256,9 @@ fun! s:startResize(commands)
     endif
     redraw
   endwhile
+
+  " Restore hlsearch to its original value.
+  let &hlsearch = l:hlsearch
 endfun
 
 " Decide behavior of up, down, left and right key .
