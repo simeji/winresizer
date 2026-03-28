@@ -272,3 +272,51 @@ Execute (getResizeBehavior bottom window of split flips vertical signs):
   let b = g:WrPrivate('getResizeBehavior')
   AssertEqual '+', b['up'],   'bottom window of split: up sign should be +'
   AssertEqual '-', b['down'], 'bottom window of split: down sign should be -'
+
+" ============================================================
+" Suite 7: Window close hotkey
+" ============================================================
+
+Before (two windows):
+  only
+  new
+  only
+  vsplit
+
+After (cleanup):
+  only
+
+Execute (close key config exists with default value x=120):
+  AssertEqual 120, g:winresizer_keycode_close
+
+Execute (x hotkey closes window through startResize dispatch):
+  AssertEqual 2, winnr('$'), 'should start with 2 windows'
+  " Pre-populate typeahead: x=close, Enter=finish
+  " 'L' pushes to the front of typeahead without remapping
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should close window via startResize'
+
+Execute (x hotkey is no-op when only one window remains):
+  only
+  AssertEqual 1, winnr('$')
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should not close last window'
+
+Execute (x hotkey continues resize loop when close fails):
+  set nohidden
+  " Reset to a fresh layout: two windows showing DIFFERENT buffers
+  " so that closing one would make the modified buffer hidden (triggering E89)
+  only
+  new
+  call setline(1, 'unsaved change')
+  " Current window (top): new modified buffer (unique to this window)
+  " Other window (bottom): original buffer
+  AssertEqual 2, winnr('$')
+  " x=close (fails: unsaved changes + nohidden), then q=cancel to exit loop
+  call feedkeys("xq", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 2, winnr('$'), 'loop should continue after failed close'
+  set hidden
+  bdelete!

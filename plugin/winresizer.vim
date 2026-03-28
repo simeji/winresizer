@@ -100,6 +100,7 @@ let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
 let g:winresizer_keycode_enter = get(g:, 'winresizer_keycode_enter', s:default_keycode['enter'])
 let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode', s:default_keycode['mode'])
+let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close', 120)
 
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
@@ -114,6 +115,7 @@ let s:codeList = {
         \  'resize': g:winresizer_keycode_resize,
         \  'enter': g:winresizer_keycode_enter,
         \  'mode' : g:winresizer_keycode_mode,
+        \  'close': g:winresizer_keycode_close,
         \}
 
 exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
@@ -199,7 +201,7 @@ fun! s:startResize(commands)
 
   while 1
 
-    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_cancel.'": Cancel '
+    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_close.'": Close win , "'.s:label_cancel.'": Cancel '
 
     let c = getchar()
 
@@ -219,6 +221,15 @@ fun! s:startResize(commands)
       let l:commands = s:tuiResizeCommands()
     elseif c == s:codeList['enter'] && l:commands['mode'] == "focus"
       let l:commands = s:tuiResizeCommands()
+    elseif c == s:codeList['close'] "c
+      if winnr('$') > 1
+        try
+          close
+          let l:commands = s:tuiResizeCommands()
+        catch
+          echohl WarningMsg | echo 'winresizer: ' . v:exception | echohl None
+        endtry
+      endif
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']
       redraw
@@ -280,6 +291,7 @@ endfun
 
 let s:label_finish = s:getKeyAlias(g:winresizer_keycode_finish)
 let s:label_cancel = s:getKeyAlias(g:winresizer_keycode_cancel)
-let s:label_mode = s:getKeyAlias(g:winresizer_keycode_mode)
+let s:label_mode   = s:getKeyAlias(g:winresizer_keycode_mode)
+let s:label_close  = s:getKeyAlias(g:winresizer_keycode_close)
 
 let &cpo = s:save_cpo

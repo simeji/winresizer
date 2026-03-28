@@ -69,6 +69,7 @@ The key values are ASCII values. You can find a list of mappings [here](https://
 |g:winresizer_keycode_mode|101(`e`)|Rotate a mode (Resize -> Move -> Focus -> Resize ...)|
 |g:winresizer_keycode_finish|13(`Enter`)|Fix and escape from window resize mode|
 |g:winresizer_keycode_cancel|113(`q`)|Cancel and quit window resize mode|
+|g:winresizer_keycode_close|120(`x`)|Close the current window (no-op if only one window remains)|
 
 If you want to resize MacVim window itself, you must set below.
 
