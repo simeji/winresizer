@@ -286,8 +286,8 @@ Before (two windows):
 After (cleanup):
   only
 
-Execute (close key config exists with default value c=99):
-  AssertEqual 99, g:winresizer_keycode_close
+Execute (close key config exists with default value x=120):
+  AssertEqual 120, g:winresizer_keycode_close
 
 Execute (closing a window reduces window count):
   AssertEqual 2, winnr('$'), 'should start with 2 windows'

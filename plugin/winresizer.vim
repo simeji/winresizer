@@ -100,7 +100,7 @@ let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
 let g:winresizer_keycode_enter = get(g:, 'winresizer_keycode_enter', s:default_keycode['enter'])
 let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode', s:default_keycode['mode'])
-let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close', 99)
+let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close', 120)
 
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
