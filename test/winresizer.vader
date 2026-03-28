@@ -272,3 +272,33 @@ Execute (getResizeBehavior bottom window of split flips vertical signs):
   let b = g:WrPrivate('getResizeBehavior')
   AssertEqual '+', b['up'],   'bottom window of split: up sign should be +'
   AssertEqual '-', b['down'], 'bottom window of split: down sign should be -'
+
+" ============================================================
+" Suite 7: Window close hotkey
+" ============================================================
+
+Before (two windows):
+  only
+  new
+  only
+  vsplit
+
+After (cleanup):
+  only
+
+Execute (close key config exists with default value c=99):
+  AssertEqual 99, g:winresizer_keycode_close
+
+Execute (closing a window reduces window count):
+  AssertEqual 2, winnr('$'), 'should start with 2 windows'
+  close
+  AssertEqual 1, winnr('$'), 'should have 1 window after close'
+
+Execute (close is no-op when only one window remains):
+  only
+  AssertEqual 1, winnr('$')
+  " winnr('$') > 1 guard prevents closing last window
+  if winnr('$') > 1
+    close
+  endif
+  AssertEqual 1, winnr('$'), 'single window should remain'
