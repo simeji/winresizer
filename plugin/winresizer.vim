@@ -131,7 +131,6 @@ let s:codeList = {
         \  'resize' : g:winresizer_keycode_resize,
         \  'enter'  : g:winresizer_keycode_enter,
         \  'mode'   : g:winresizer_keycode_mode,
-        \  'num0'   : '48',
         \  'num1'   : '49',
         \  'num2'   : '50',
         \  'num3'   : '51',
@@ -264,8 +263,6 @@ fun! s:startResize(commands)
       let l:commands = s:tuiResizeCommands()
     elseif c == s:codeList['enter'] && l:commands['mode'] == "focus"
       let l:commands = s:tuiResizeCommands()
-    elseif c == s:codeList['num0'] && exists("l:commands['num0']") "0
-      exe l:commands['num0']
     elseif c == s:codeList['num1'] && exists("l:commands['num1']") "1
       exe l:commands['num1']
     elseif c == s:codeList['num2'] && exists("l:commands['num2']") "2
