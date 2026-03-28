@@ -197,8 +197,10 @@ fun! s:startResize(commands)
 
   let l:commands = a:commands
 
-  " XXX: Disable unexpected search highlight.
-  let l:hlsearch  = &hlsearch
+  " Suppress search highlights during resize operations.
+  " Some window commands (e.g. wincmd) trigger a redraw that re-enables
+  " highlights even after :nohl, so we disable the option for the duration.
+  let l:hlsearch = &hlsearch
   set nohlsearch
 
   while 1
@@ -244,8 +246,8 @@ fun! s:startResize(commands)
     redraw
   endwhile
 
-  " XXX: Rollback the hlsearch setting.
-  exec 'set ' . (l:hlsearch ? '' : 'no') . 'hlsearch'
+  " Restore hlsearch to its original value.
+  let &hlsearch = l:hlsearch
 endfun
 
 " Decide behavior of up, down, left and right key .
