@@ -61,11 +61,21 @@ endfun
 fun! winresizer#swapWindow(to)
   let curNum = winnr()
   let curBuf = bufnr( "%" )
+  if has('patch-8.1.2018')
+    let curMatch = getmatches(curNum)
+  endif
   exe a:to . "wincmd w"
-  let toBuf  = bufnr( "%" )
+  let toBuf = bufnr( "%" )
+  if has('patch-8.1.2018')
+    let toMatch = getmatches(a:to)
+  endif
   exe 'hide buf' curBuf
   exe curNum . "wincmd w"
   exe 'hide buf' toBuf
+  if has('patch-8.1.2018')
+    call setmatches(curMatch, a:to)
+    call setmatches(toMatch,  curNum)
+  endif
   exe a:to ."wincmd w"
 endfun
 
