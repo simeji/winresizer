@@ -264,16 +264,21 @@ endfun
 " Decide behavior of up, down, left and right key .
 " (to increase or decrease window size) 
 fun! s:getResizeBehavior()
-  let signs = {'left':'-', 'down':'+', 'up':'-', 'right':'+'}
+  " There are two situations (window's position):
+  "   1. left and bottom: the right and upper lines move (default)
+  "   2. the others (right and upper): the left and bottom lines move
+  let signs = {'left':'-', 'down':'-', 'up':'+', 'right':'+'}
   let result = {}
   let ei = winresizer#getEdgeInfo()
-  if !ei['left'] && ei['right']
+
+  if !ei['left']                        " the right windows: left line
     let signs['left'] = '+'
     let signs['right'] = '-'
   endif
-  if !ei['up'] && ei['down']
-    let signs['up'] = '+'
-    let signs['down'] = '-'
+
+  if !ei['down']                        " the upper windows: bottom line
+    let signs['up'] = '-'
+    let signs['down'] = '+'
   endif
   return signs
 endfun
