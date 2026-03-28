@@ -32,7 +32,7 @@ fun! winresizer#canMoveCursorFromCurrentWindow(direct)
   exe "wincmd " . direct
   let to = winnr()
   exe from . "wincmd w"
-  exe "set winwidth=" . winwidth " winheight=" . winheight
+  exe "set winwidth=" . winwidth . " winheight=" . winheight
   return from != to
 endfun
 
