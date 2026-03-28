@@ -223,8 +223,12 @@ fun! s:startResize(commands)
       let l:commands = s:tuiResizeCommands()
     elseif c == s:codeList['close'] "c
       if winnr('$') > 1
-        close
-        let l:commands = s:tuiResizeCommands()
+        try
+          close
+          let l:commands = s:tuiResizeCommands()
+        catch
+          echohl WarningMsg | echo 'winresizer: ' . v:exception | echohl None
+        endtry
       endif
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']

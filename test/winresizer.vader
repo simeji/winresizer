@@ -303,3 +303,20 @@ Execute (x hotkey is no-op when only one window remains):
   call feedkeys("x\<CR>", 'L')
   execute 'WinResizerStartResize'
   AssertEqual 1, winnr('$'), 'x hotkey should not close last window'
+
+Execute (x hotkey continues resize loop when close fails):
+  set nohidden
+  " Reset to a fresh layout: two windows showing DIFFERENT buffers
+  " so that closing one would make the modified buffer hidden (triggering E89)
+  only
+  new
+  call setline(1, 'unsaved change')
+  " Current window (top): new modified buffer (unique to this window)
+  " Other window (bottom): original buffer
+  AssertEqual 2, winnr('$')
+  " x=close (fails: unsaved changes + nohidden), then q=cancel to exit loop
+  call feedkeys("xq", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 2, winnr('$'), 'loop should continue after failed close'
+  set hidden
+  bdelete!
