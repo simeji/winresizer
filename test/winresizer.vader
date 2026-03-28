@@ -1,0 +1,322 @@
+" ============================================================
+" winresizer.vim test suite
+" Run: vim -Es -u test/vimrc '+Vader! test/winresizer.vader'
+" ============================================================
+
+" ============================================================
+" Suite 1: Edge detection (single window)
+" ============================================================
+
+Before (reset to single window):
+  only
+  new
+  only
+
+After (cleanup):
+  only
+
+Execute (single window has all edges):
+  let edge = winresizer#getEdgeInfo()
+  AssertEqual 1, edge['left'],  'single window: left should be edge'
+  AssertEqual 1, edge['right'], 'single window: right should be edge'
+  AssertEqual 1, edge['up'],    'single window: up should be edge'
+  AssertEqual 1, edge['down'],  'single window: down should be edge'
+
+Execute (vsplit - left window loses right edge):
+  " vsplit with nosplitright (default): cursor goes to new LEFT window
+  vsplit
+  let edge = winresizer#getEdgeInfo()
+  AssertEqual 1, edge['left'],  'vsplit left: left should be edge'
+  AssertEqual 0, edge['right'], 'vsplit left: right should NOT be edge'
+  AssertEqual 1, edge['up'],    'vsplit left: up should be edge'
+  AssertEqual 1, edge['down'],  'vsplit left: down should be edge'
+
+Execute (vsplit - right window loses left edge):
+  " Move to right window explicitly
+  vsplit
+  wincmd l
+  let edge = winresizer#getEdgeInfo()
+  AssertEqual 0, edge['left'],  'vsplit right: left should NOT be edge'
+  AssertEqual 1, edge['right'], 'vsplit right: right should be edge'
+  AssertEqual 1, edge['up'],    'vsplit right: up should be edge'
+  AssertEqual 1, edge['down'],  'vsplit right: down should be edge'
+
+Execute (split - top window loses bottom edge):
+  " split with nosplitbelow (default): cursor goes to new TOP window
+  split
+  let edge = winresizer#getEdgeInfo()
+  AssertEqual 1, edge['left'],  'split top: left should be edge'
+  AssertEqual 1, edge['right'], 'split top: right should be edge'
+  AssertEqual 1, edge['up'],    'split top: up should be edge'
+  AssertEqual 0, edge['down'],  'split top: down should NOT be edge'
+
+Execute (split - bottom window loses top edge):
+  " Move to bottom window explicitly
+  split
+  wincmd j
+  let edge = winresizer#getEdgeInfo()
+  AssertEqual 1, edge['left'],  'split bottom: left should be edge'
+  AssertEqual 1, edge['right'], 'split bottom: right should be edge'
+  AssertEqual 0, edge['up'],    'split bottom: up should NOT be edge'
+  AssertEqual 1, edge['down'],  'split bottom: down should be edge'
+
+" ============================================================
+" Suite 2: canMoveCursorFromCurrentWindow
+" ============================================================
+
+Before (two-column layout):
+  only
+  new
+  only
+  vsplit
+  " After vsplit (nosplitright): cursor is in LEFT window
+
+After (cleanup):
+  only
+
+Execute (can move right from left window):
+  " Already in left window after vsplit
+  let result = winresizer#canMoveCursorFromCurrentWindow('right')
+  AssertEqual 1, result, 'left window: should be able to move right'
+
+Execute (cannot move left from left window):
+  let result = winresizer#canMoveCursorFromCurrentWindow('left')
+  AssertEqual 0, result, 'left window: should NOT be able to move left'
+
+Execute (can move left from right window):
+  wincmd l
+  let result = winresizer#canMoveCursorFromCurrentWindow('left')
+  AssertEqual 1, result, 'right window: should be able to move left'
+
+Execute (cannot move right from right window):
+  wincmd l
+  let result = winresizer#canMoveCursorFromCurrentWindow('right')
+  AssertEqual 0, result, 'right window: should NOT be able to move right'
+
+Execute (accepts h/j/k/l as direction aliases):
+  " In left window
+  AssertEqual 1, winresizer#canMoveCursorFromCurrentWindow('l'), 'alias l should work'
+  AssertEqual 0, winresizer#canMoveCursorFromCurrentWindow('h'), 'alias h should work'
+
+" ============================================================
+" Suite 3: swapWindow
+" ============================================================
+
+Before (two-column layout with named buffers):
+  only
+  new
+  only
+  file! win_left
+  vsplit
+  file! win_right
+  " After vsplit (nosplitright): cursor is in LEFT window (win_left)
+  " Right window is win_right
+
+After (cleanup):
+  only
+  silent! bdelete win_left
+  silent! bdelete win_right
+
+Execute (swapWindow exchanges buffers between two windows):
+  " Cursor is already in left window after vsplit
+  let left_win  = winnr()
+  let left_buf  = bufnr('%')   " win_left
+
+  wincmd l
+  let right_win = winnr()
+  let right_buf = bufnr('%')   " win_right
+
+  " Swap from left window
+  exe left_win . 'wincmd w'
+  call winresizer#swapWindow(right_win)
+
+  exe left_win . 'wincmd w'
+  AssertEqual right_buf, bufnr('%'), 'left window should now have right buffer'
+
+  exe right_win . 'wincmd w'
+  AssertEqual left_buf, bufnr('%'), 'right window should now have left buffer'
+
+" ============================================================
+" Suite 4: swapTo
+" ============================================================
+
+Before (two-column layout with named buffers):
+  only
+  new
+  only
+  file! swap_left
+  vsplit
+  file! swap_right
+  " After vsplit (nosplitright): cursor is in LEFT window (swap_left)
+
+After (cleanup):
+  only
+  silent! bdelete swap_left
+  silent! bdelete swap_right
+
+Execute (swapTo right moves current window buffer to the right):
+  let left_win  = winnr()
+  let left_buf  = bufnr('%')   " swap_left
+
+  wincmd l
+  let right_win = winnr()
+  let right_buf = bufnr('%')   " swap_right
+
+  exe left_win . 'wincmd w'
+  call winresizer#swapTo('right')
+
+  exe left_win . 'wincmd w'
+  AssertEqual right_buf, bufnr('%'), 'left window should now contain right buffer'
+
+  exe right_win . 'wincmd w'
+  AssertEqual left_buf, bufnr('%'), 'right window should now contain left buffer'
+
+Execute (swapTo does nothing when no window in that direction):
+  " Cursor is in left window; no window to the left
+  let left_buf = bufnr('%')
+  call winresizer#swapTo('left')
+  AssertEqual left_buf, bufnr('%'), 'buffer should be unchanged when no window in direction'
+
+" ============================================================
+" Suite 5: Private functions via SID wrapper
+" ============================================================
+
+Before (setup SID wrapper):
+  " Find the script-local SID for plugin/winresizer.vim
+  let g:wr_sid = 0
+  for s:line in split(execute('scriptnames'), "\n")
+    let s:m = matchlist(s:line, '^\s*\(\d\+\):\s\+.*plugin[/\\]winresizer\.vim\s*$')
+    if !empty(s:m)
+      let g:wr_sid = str2nr(s:m[1])
+      break
+    endif
+  endfor
+  if g:wr_sid == 0
+    throw 'Cannot find plugin/winresizer.vim in :scriptnames'
+  endif
+
+  function! g:WrPrivate(name, ...) abort
+    let l:Fn = function('<SNR>' . g:wr_sid . '_' . a:name)
+    return call(l:Fn, a:000)
+  endfunction
+
+After:
+
+Execute (SID was found):
+  Assert g:wr_sid > 0, 'SID should be a positive integer'
+
+Execute (getKeyAlias: Enter):
+  AssertEqual 'Enter', g:WrPrivate('getKeyAlias', 13)
+
+Execute (getKeyAlias: Space):
+  AssertEqual 'Space', g:WrPrivate('getKeyAlias', 32)
+
+Execute (getKeyAlias: printable characters):
+  AssertEqual 'a', g:WrPrivate('getKeyAlias', 97)
+  AssertEqual 'q', g:WrPrivate('getKeyAlias', 113)
+
+Execute (getOppositeSign: plus to minus):
+  AssertEqual '-', g:WrPrivate('getOppositeSign', '+')
+
+Execute (getOppositeSign: minus to plus):
+  AssertEqual '+', g:WrPrivate('getOppositeSign', '-')
+
+" ============================================================
+" Suite 6: getResizeBehavior (via SID wrapper)
+" ============================================================
+
+Before (setup SID + single window):
+  only
+  new
+  only
+  let g:wr_sid = 0
+  for s:line in split(execute('scriptnames'), "\n")
+    let s:m = matchlist(s:line, '^\s*\(\d\+\):\s\+.*plugin[/\\]winresizer\.vim\s*$')
+    if !empty(s:m)
+      let g:wr_sid = str2nr(s:m[1])
+      break
+    endif
+  endfor
+  if g:wr_sid == 0
+    throw 'Cannot find plugin/winresizer.vim in :scriptnames'
+  endif
+  function! g:WrPrivate(name, ...) abort
+    let l:Fn = function('<SNR>' . g:wr_sid . '_' . a:name)
+    return call(l:Fn, a:000)
+  endfunction
+
+After:
+  only
+
+Execute (getResizeBehavior single window uses default signs):
+  " All edges present: default signs apply
+  " left='-', right='+', up='-', down='+'
+  let b = g:WrPrivate('getResizeBehavior')
+  AssertEqual '-', b['left'],  'single window: left sign should be -'
+  AssertEqual '+', b['right'], 'single window: right sign should be +'
+  AssertEqual '-', b['up'],    'single window: up sign should be -'
+  AssertEqual '+', b['down'],  'single window: down sign should be +'
+
+Execute (getResizeBehavior right window of vsplit flips horizontal signs):
+  " Right window: left=no-edge, right=edge -> signs flip
+  vsplit
+  wincmd l
+  let b = g:WrPrivate('getResizeBehavior')
+  AssertEqual '+', b['left'],  'right window of vsplit: left sign should be +'
+  AssertEqual '-', b['right'], 'right window of vsplit: right sign should be -'
+
+Execute (getResizeBehavior bottom window of split flips vertical signs):
+  " Bottom window: up=no-edge, down=edge -> signs flip
+  split
+  wincmd j
+  let b = g:WrPrivate('getResizeBehavior')
+  AssertEqual '+', b['up'],   'bottom window of split: up sign should be +'
+  AssertEqual '-', b['down'], 'bottom window of split: down sign should be -'
+
+" ============================================================
+" Suite 7: Window close hotkey
+" ============================================================
+
+Before (two windows):
+  only
+  new
+  only
+  vsplit
+
+After (cleanup):
+  only
+
+Execute (close key config exists with default value x=120):
+  AssertEqual 120, g:winresizer_keycode_close
+
+Execute (x hotkey closes window through startResize dispatch):
+  AssertEqual 2, winnr('$'), 'should start with 2 windows'
+  " Pre-populate typeahead: x=close, Enter=finish
+  " 'L' pushes to the front of typeahead without remapping
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should close window via startResize'
+
+Execute (x hotkey is no-op when only one window remains):
+  only
+  AssertEqual 1, winnr('$')
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should not close last window'
+
+Execute (x hotkey continues resize loop when close fails):
+  set nohidden
+  " Reset to a fresh layout: two windows showing DIFFERENT buffers
+  " so that closing one would make the modified buffer hidden (triggering E89)
+  only
+  new
+  call setline(1, 'unsaved change')
+  " Current window (top): new modified buffer (unique to this window)
+  " Other window (bottom): original buffer
+  AssertEqual 2, winnr('$')
+  " x=close (fails: unsaved changes + nohidden), then q=cancel to exit loop
+  call feedkeys("xq", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 2, winnr('$'), 'loop should continue after failed close'
+  set hidden
+  bdelete!

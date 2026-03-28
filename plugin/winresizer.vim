@@ -112,6 +112,7 @@ let g:winresizer_keycode_cancel = get(g:, 'winresizer_keycode_cancel', s:default
 let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default_keycode['escape'])
 let g:winresizer_keycode_enter  = get(g:, 'winresizer_keycode_enter',  s:default_keycode['enter'])
 let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode',   s:default_keycode['mode'])
+let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close', 120)
 
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
@@ -131,6 +132,7 @@ let s:codeList = {
         \  'resize' : g:winresizer_keycode_resize,
         \  'enter'  : g:winresizer_keycode_enter,
         \  'mode'   : g:winresizer_keycode_mode,
+        \  'close'  : g:winresizer_keycode_close,
         \  'num1'   : '49',
         \  'num2'   : '50',
         \  'num3'   : '51',
@@ -142,14 +144,18 @@ let s:codeList = {
         \  'num9'   : '57',
         \}
 
-exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
+if g:winresizer_enable != 0 && !empty(g:winresizer_start_key)
+  exe 'nnoremap ' . g:winresizer_start_key .' :WinResizerStartResize<CR>'
+endif
 
 com! WinResizerStartResize call s:startResize(s:tuiResizeCommands())
 com! WinResizerStartMove call s:startResize(s:moveCommands())
 com! WinResizerStartFocus call s:startResize(s:focusCommands())
 
-if has("gui_running") && g:winresizer_gui_enable != 0
-  exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
+if has("gui_running") && g:winresizer_gui_enable != 0 && g:winresizer_enable != 0
+  if !empty(g:winresizer_gui_start_key)
+    exe 'nnoremap ' . g:winresizer_gui_start_key .' :WinResizerStartResizeGUI<CR>'
+  endif
   com! WinResizerStartResizeGUI call s:startResize(s:guiResizeCommands())
 endif
 
@@ -237,9 +243,15 @@ fun! s:startResize(commands)
 
   let l:commands = a:commands
 
+  " Suppress search highlights during resize operations.
+  " Some window commands (e.g. wincmd) trigger a redraw that re-enables
+  " highlights even after :nohl, so we disable the option for the duration.
+  let l:hlsearch = &hlsearch
+  set nohlsearch
+
   while 1
 
-    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_cancel.'": Cancel '
+    echo '[window ' . l:commands['mode'] . ' mode]... "'.s:label_finish.'": OK , "'.s:label_mode.'": Change mode , "'.s:label_close.'": Close win , "'.s:label_cancel.'": Cancel '
 
     let c = getchar()
 
@@ -255,9 +267,9 @@ fun! s:startResize(commands)
       exe l:commands['split']
     elseif c == s:codeList['vsplit'] && exists("l:commands['vsplit']") "v
       exe l:commands['vsplit']
-    elseif c == s:codeList['focus'] "f
+    elseif c == s:codeList['focus'] && getcmdwintype() ==# '' "f
       let l:commands = s:focusCommands()
-    elseif c == s:codeList['move'] "w
+    elseif c == s:codeList['move'] && getcmdwintype() ==# '' "w
       let l:commands = s:moveCommands()
     elseif c == s:codeList['resize'] "r
       let l:commands = s:tuiResizeCommands()
@@ -287,12 +299,21 @@ fun! s:startResize(commands)
       exe l:commands['fnext']
     elseif c == s:codeList['fprev'] && exists("l:commands['fprev']") "W
       exe l:commands['fprev']
+    elseif c == s:codeList['close'] "x
+      if winnr('$') > 1
+        try
+          close
+          let l:commands = s:tuiResizeCommands()
+        catch
+          echohl WarningMsg | echo 'winresizer: ' . v:exception | echohl None
+        endtry
+      endif
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']
       redraw
       echo "Canceled!"
       break
-    elseif c == s:codeList['mode']
+    elseif c == s:codeList['mode'] && getcmdwintype() ==# ''
       if l:commands['mode'] == 'move'
         let l:commands = s:focusCommands()
       elseif l:commands['mode'] == 'focus'
@@ -307,6 +328,9 @@ fun! s:startResize(commands)
     endif
     redraw
   endwhile
+
+  " Restore hlsearch to its original value.
+  let &hlsearch = l:hlsearch
 endfun
 
 " Decide behavior of up, down, left and right key .
@@ -348,6 +372,7 @@ endfun
 
 let s:label_finish = s:getKeyAlias(g:winresizer_keycode_finish)
 let s:label_cancel = s:getKeyAlias(g:winresizer_keycode_cancel)
-let s:label_mode = s:getKeyAlias(g:winresizer_keycode_mode)
+let s:label_mode   = s:getKeyAlias(g:winresizer_keycode_mode)
+let s:label_close  = s:getKeyAlias(g:winresizer_keycode_close)
 
 let &cpo = s:save_cpo

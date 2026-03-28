@@ -12,9 +12,16 @@ set cpo&vim
 fun! winresizer#getEdgeInfo()
   let chk_direct = ['left', 'down', 'up', 'right']
   let result = {}
-  for direct in chk_direct
-    exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
-  endfor
+  if getcmdwintype() ==# ''
+      for direct in chk_direct
+        silent! exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
+      endfor
+  else
+      let result['left'] = 1
+      let result['down'] = 1
+      let result['up'] = 0
+      let result['right'] = 1
+  endif
   return result
 endfun
 
@@ -25,10 +32,14 @@ fun! winresizer#canMoveCursorFromCurrentWindow(direct)
   elseif index(values(map_direct), a:direct) != -1
     let direct = a:direct
   endif
+  let winwidth  = &winwidth
+  let winheight = &winheight
+  set winwidth=1 winheight=1
   let from = winnr()
   exe "wincmd " . direct
   let to = winnr()
   exe from . "wincmd w"
+  exe "set winwidth=" . winwidth . " winheight=" . winheight
   return from != to
 endfun
 
@@ -54,11 +65,21 @@ endfun
 fun! winresizer#swapWindow(to)
   let curNum = winnr()
   let curBuf = bufnr( "%" )
+  if has('patch-8.1.2018')
+    let curMatch = getmatches(curNum)
+  endif
   exe a:to . "wincmd w"
-  let toBuf  = bufnr( "%" )
+  let toBuf = bufnr( "%" )
+  if has('patch-8.1.2018')
+    let toMatch = getmatches(a:to)
+  endif
   exe 'hide buf' curBuf
   exe curNum . "wincmd w"
   exe 'hide buf' toBuf
+  if has('patch-8.1.2018')
+    call setmatches(curMatch, a:to)
+    call setmatches(toMatch,  curNum)
+  endif
   exe a:to ."wincmd w"
 endfun
 

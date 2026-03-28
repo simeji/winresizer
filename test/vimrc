@@ -1,0 +1,9 @@
+set nocompatible
+
+let s:testdir = expand('<sfile>:p:h')
+let s:rootdir = s:testdir . '/..'
+
+execute 'set runtimepath=' . s:rootdir . ',' . s:testdir . '/vader.vim,' . $VIMRUNTIME
+
+filetype plugin indent on
+syntax enable
