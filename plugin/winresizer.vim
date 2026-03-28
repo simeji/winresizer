@@ -342,8 +342,10 @@ fun! s:startResize(commands)
       exe l:commands['sizeeq']
     elseif c == s:codeList['tabl'] && has_key(l:commands, 'tabl') "J
       exe l:commands['tabl']
+      let l:commands = s:commandsForMode(l:commands['mode'])
     elseif c == s:codeList['tabr'] && has_key(l:commands, 'tabr') "K
       exe l:commands['tabr']
+      let l:commands = s:commandsForMode(l:commands['mode'])
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']
       redraw
@@ -367,6 +369,19 @@ fun! s:startResize(commands)
 
   " Restore hlsearch to its original value.
   let &hlsearch = l:hlsearch
+endfun
+
+" Return fresh commands dict for the given mode name.
+" Used to rebuild state after tab navigation so edge detection
+" and winrestcmd() snapshots reflect the new tab's layout.
+fun! s:commandsForMode(mode)
+  if a:mode ==# 'move'
+    return s:moveCommands()
+  elseif a:mode ==# 'focus'
+    return s:focusCommands()
+  else
+    return s:tuiResizeCommands()
+  endif
 endfun
 
 " Decide behavior of up, down, left and right key .

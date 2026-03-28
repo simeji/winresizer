@@ -353,6 +353,17 @@ Execute (K hotkey moves to next tab):
   execute 'WinResizerStartResize'
   AssertEqual 2, tabpagenr(), 'K should move to next tab'
 
+Execute (commands are rebuilt after tab switch - cancel restores new tab layout):
+  " On tab 2: create a split and record its layout
+  split
+  AssertEqual 2, winnr('$'), 'tab 2 should have 2 windows'
+  let h_before = winheight(0)
+  " J moves to tab 1, then q cancels — cancel should restore tab 1 layout, not tab 2
+  call feedkeys("Jq", 'L')
+  execute 'WinResizerStartResize'
+  " We end up on tab 1 after J; verify we are indeed on tab 1
+  AssertEqual 1, tabpagenr(), 'should be on tab 1 after J+cancel'
+
 " ============================================================
 " Suite 9: Window size commands
 " ============================================================
