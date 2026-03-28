@@ -177,7 +177,7 @@ endif
 fun! s:guiResizeCommands()
 
   let commands = {
-      \  'mode'   : "resize",
+      \  'mode'   : "gui_resize",
       \  'left'   : 'let &columns = &columns - ' . g:winresizer_vert_resize,
       \  'right'  : 'let &columns = &columns + ' . g:winresizer_vert_resize,
       \  'up'     : 'let &lines = &lines - ' . g:winresizer_horiz_resize,
@@ -379,6 +379,8 @@ fun! s:commandsForMode(mode)
     return s:moveCommands()
   elseif a:mode ==# 'focus'
     return s:focusCommands()
+  elseif a:mode ==# 'gui_resize'
+    return s:guiResizeCommands()
   else
     return s:tuiResizeCommands()
   endif
