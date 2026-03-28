@@ -93,6 +93,45 @@ Once inside winresizer session:
   q                                                           *winresizer-q*
     Cancel size/move/focus change.
 
+  x                                                           *winresizer-x*
+    Close the current window. No-op if only one window remains.
+
+  _                                                           *winresizer-_*
+    Maximize the height of the current window (|win-resize| mode only).
+
+  |                                                           *winresizer-bar*
+    Maximize the width of the current window (|win-resize| mode only).
+
+  =                                                           *winresizer-=*
+    Equalize the size of all windows (|win-resize| mode only).
+
+  J                                                           *winresizer-J*
+    Switch to the previous tab page (all modes).
+
+  K                                                           *winresizer-K*
+    Switch to the next tab page (all modes).
+
+------------------------------------------------------------------------------
+Keys available in |win-focus| mode only:
+
+  s                                                           *winresizer-s*
+    Split the current window horizontally.
+
+  v                                                           *winresizer-v*
+    Split the current window vertically.
+
+  $                                                           *winresizer-$*
+    Move focus to the last window.
+
+  w                                                           *winresizer-w*
+    Move focus to the next window.
+
+  W                                                           *winresizer-W*
+    Move focus to the previous window.
+
+  1-9                                                       *winresizer-1-9*
+    Move focus directly to window number N.
+
 ==============================================================================
 CUSTOMIZATION                                     *winresizer-customization*
 
@@ -115,6 +154,17 @@ Overview:~
   |g:winresizer_keycode_mode| ............. Key for mode switch
   |g:winresizer_keycode_finish| ........... Key for finish
   |g:winresizer_keycode_cancel| ........... Key for cancel
+  |g:winresizer_keycode_close| ............ Key for closing a window
+  |g:winresizer_keycode_hfull| ............ Key for maximizing window height
+  |g:winresizer_keycode_vfull| ............ Key for maximizing window width
+  |g:winresizer_keycode_sizeeq| ........... Key for equalizing window sizes
+  |g:winresizer_keycode_tabl| ............. Key for previous tab
+  |g:winresizer_keycode_tabr| ............. Key for next tab
+  |g:winresizer_keycode_split| ............ Key for horizontal split (focus mode)
+  |g:winresizer_keycode_vsplit| ........... Key for vertical split (focus mode)
+  |g:winresizer_keycode_flast| ............ Key for last window (focus mode)
+  |g:winresizer_keycode_fnext| ............ Key for next window (focus mode)
+  |g:winresizer_keycode_fprev| ............ Key for previous window (focus mode)
 
 ------------------------------------------------------------------------------
 Detailed description and default values:~
@@ -186,6 +236,50 @@ Detailed description and default values:~
                                                *g:winresizer_keycode_cancel*
 * The keycode used as the `cancel` or `q` key >
   let g:winresizer_keycode_cancel=113 " q
+<
+                                                *g:winresizer_keycode_close*
+* The keycode used to close the current window (no-op if only one window) >
+  let g:winresizer_keycode_close=120 " x
+<
+                                                *g:winresizer_keycode_hfull*
+* The keycode used to maximize the current window height (resize mode only) >
+  let g:winresizer_keycode_hfull=95 " _
+<
+                                                *g:winresizer_keycode_vfull*
+* The keycode used to maximize the current window width (resize mode only) >
+  let g:winresizer_keycode_vfull=124 " |
+<
+                                               *g:winresizer_keycode_sizeeq*
+* The keycode used to equalize all window sizes (resize mode only) >
+  let g:winresizer_keycode_sizeeq=61 " =
+<
+                                                 *g:winresizer_keycode_tabl*
+* The keycode used to switch to the previous tab page (all modes) >
+  let g:winresizer_keycode_tabl=74 " J
+<
+                                                 *g:winresizer_keycode_tabr*
+* The keycode used to switch to the next tab page (all modes) >
+  let g:winresizer_keycode_tabr=75 " K
+<
+                                                *g:winresizer_keycode_split*
+* The keycode used to split the window horizontally (focus mode only) >
+  let g:winresizer_keycode_split=115 " s
+<
+                                               *g:winresizer_keycode_vsplit*
+* The keycode used to split the window vertically (focus mode only) >
+  let g:winresizer_keycode_vsplit=118 " v
+<
+                                                *g:winresizer_keycode_flast*
+* The keycode used to move focus to the last window (focus mode only) >
+  let g:winresizer_keycode_flast=36 " $
+<
+                                                *g:winresizer_keycode_fnext*
+* The keycode used to move focus to the next window (focus mode only) >
+  let g:winresizer_keycode_fnext=119 " w
+<
+                                                *g:winresizer_keycode_fprev*
+* The keycode used to move focus to the previous window (focus mode only) >
+  let g:winresizer_keycode_fprev=87 " W
 <
 ==============================================================================
 LICENSE                                                 *winresizer-license*

@@ -85,6 +85,11 @@ let s:default_keycode = {
              \           'flast'  : '36',
              \           'fnext'  : '119',
              \           'fprev'  : '87',
+             \           'hfull'  : '95',
+             \           'vfull'  : '124',
+             \           'sizeeq' : '61',
+             \           'tabl'   : '74',
+             \           'tabr'   : '75',
              \           'finish':'13',
              \           'cancel':'113',
              \           'enter' :'13',
@@ -113,6 +118,11 @@ let g:winresizer_keycode_escape = get(g:, 'winresizer_keycode_escape', s:default
 let g:winresizer_keycode_enter  = get(g:, 'winresizer_keycode_enter',  s:default_keycode['enter'])
 let g:winresizer_keycode_mode   = get(g:, 'winresizer_keycode_mode',   s:default_keycode['mode'])
 let g:winresizer_keycode_close  = get(g:, 'winresizer_keycode_close', 120)
+let g:winresizer_keycode_hfull  = get(g:, 'winresizer_keycode_hfull',  95)
+let g:winresizer_keycode_vfull  = get(g:, 'winresizer_keycode_vfull',  124)
+let g:winresizer_keycode_sizeeq = get(g:, 'winresizer_keycode_sizeeq', 61)
+let g:winresizer_keycode_tabl   = get(g:, 'winresizer_keycode_tabl',   74)
+let g:winresizer_keycode_tabr   = get(g:, 'winresizer_keycode_tabr',   75)
 
 " if <ESC> key downed, finish resize mode
 let g:winresizer_finish_with_escape = get(g:, 'winresizer_finish_with_escape', 1)
@@ -133,6 +143,11 @@ let s:codeList = {
         \  'enter'  : g:winresizer_keycode_enter,
         \  'mode'   : g:winresizer_keycode_mode,
         \  'close'  : g:winresizer_keycode_close,
+        \  'hfull'  : g:winresizer_keycode_hfull,
+        \  'vfull'  : g:winresizer_keycode_vfull,
+        \  'sizeeq' : g:winresizer_keycode_sizeeq,
+        \  'tabl'   : g:winresizer_keycode_tabl,
+        \  'tabr'   : g:winresizer_keycode_tabr,
         \  'num1'   : '49',
         \  'num2'   : '50',
         \  'num3'   : '51',
@@ -162,12 +177,14 @@ endif
 fun! s:guiResizeCommands()
 
   let commands = {
-      \  'mode'   : "resize",
+      \  'mode'   : "gui_resize",
       \  'left'   : 'let &columns = &columns - ' . g:winresizer_vert_resize,
       \  'right'  : 'let &columns = &columns + ' . g:winresizer_vert_resize,
       \  'up'     : 'let &lines = &lines - ' . g:winresizer_horiz_resize,
       \  'down'   : 'let &lines = &lines + ' . g:winresizer_horiz_resize,
       \  'cancel' : 'let &columns = ' . &columns . '|let &lines = ' . &lines . '|',
+      \  'tabl'   : 'tabprevious',
+      \  'tabr'   : 'tabnext',
       \}
 
   return commands
@@ -185,6 +202,11 @@ fun! s:tuiResizeCommands()
         \  'up'     : ':resize ' . behavior['up']   . g:winresizer_horiz_resize,
         \  'down'   : ':resize ' . behavior['down'] . g:winresizer_horiz_resize,
         \  'cancel' : winrestcmd(),
+        \  'hfull'  : 'wincmd _',
+        \  'vfull'  : 'wincmd |',
+        \  'sizeeq' : 'wincmd =',
+        \  'tabl'   : 'tabprevious',
+        \  'tabr'   : 'tabnext',
         \}
 
   return commands
@@ -200,6 +222,8 @@ fun! s:moveCommands()
         \  'up'     : ":call winresizer#swapTo('up')",
         \  'down'   : ":call winresizer#swapTo('down')",
         \  'cancel' : winrestcmd(),
+        \  'tabl'   : 'tabprevious',
+        \  'tabr'   : 'tabnext',
         \}
 
   return commands
@@ -229,6 +253,8 @@ fun! s:focusCommands()
         \  'flast'  : '$ wincmd w',
         \  'fnext'  : 'wincmd w',
         \  'fprev'  : 'wincmd W',
+        \  'tabl'   : 'tabprevious',
+        \  'tabr'   : 'tabnext',
         \}
 
   return commands
@@ -308,6 +334,18 @@ fun! s:startResize(commands)
           echohl WarningMsg | echo 'winresizer: ' . v:exception | echohl None
         endtry
       endif
+    elseif c == s:codeList['hfull'] && has_key(l:commands, 'hfull') "_
+      exe l:commands['hfull']
+    elseif c == s:codeList['vfull'] && has_key(l:commands, 'vfull') "|
+      exe l:commands['vfull']
+    elseif c == s:codeList['sizeeq'] && has_key(l:commands, 'sizeeq') "=
+      exe l:commands['sizeeq']
+    elseif c == s:codeList['tabl'] && has_key(l:commands, 'tabl') "J
+      exe l:commands['tabl']
+      let l:commands = s:commandsForMode(l:commands['mode'])
+    elseif c == s:codeList['tabr'] && has_key(l:commands, 'tabr') "K
+      exe l:commands['tabr']
+      let l:commands = s:commandsForMode(l:commands['mode'])
     elseif c == g:winresizer_keycode_cancel "q
       exe l:commands['cancel']
       redraw
@@ -331,6 +369,21 @@ fun! s:startResize(commands)
 
   " Restore hlsearch to its original value.
   let &hlsearch = l:hlsearch
+endfun
+
+" Return fresh commands dict for the given mode name.
+" Used to rebuild state after tab navigation so edge detection
+" and winrestcmd() snapshots reflect the new tab's layout.
+fun! s:commandsForMode(mode)
+  if a:mode ==# 'move'
+    return s:moveCommands()
+  elseif a:mode ==# 'focus'
+    return s:focusCommands()
+  elseif a:mode ==# 'gui_resize'
+    return s:guiResizeCommands()
+  else
+    return s:tuiResizeCommands()
+  endif
 endfun
 
 " Decide behavior of up, down, left and right key .

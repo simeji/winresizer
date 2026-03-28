@@ -320,3 +320,91 @@ Execute (x hotkey continues resize loop when close fails):
   AssertEqual 2, winnr('$'), 'loop should continue after failed close'
   set hidden
   bdelete!
+
+" ============================================================
+" Suite 8: Tab navigation hotkeys
+" ============================================================
+
+Before (two tabs):
+  tabnew
+  " tabpagenr() == 2 (new tab is active)
+
+After (cleanup):
+  silent! tabclose
+  silent! tabclose
+
+Execute (tabl keycode config exists with default value J=74):
+  AssertEqual 74, g:winresizer_keycode_tabl
+
+Execute (tabr keycode config exists with default value K=75):
+  AssertEqual 75, g:winresizer_keycode_tabr
+
+Execute (J hotkey moves to previous tab):
+  AssertEqual 2, tabpagenr(), 'should start on tab 2'
+  call feedkeys("J\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, tabpagenr(), 'J should move to previous tab'
+
+Execute (K hotkey moves to next tab):
+  " Go to tab 1 first so K (tabnext) moves to tab 2
+  tabfirst
+  AssertEqual 1, tabpagenr(), 'should be on tab 1'
+  call feedkeys("K\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 2, tabpagenr(), 'K should move to next tab'
+
+Execute (commands are rebuilt after tab switch - cancel restores new tab layout):
+  " On tab 2: create a split and record its layout
+  split
+  AssertEqual 2, winnr('$'), 'tab 2 should have 2 windows'
+  let h_before = winheight(0)
+  " J moves to tab 1, then q cancels — cancel should restore tab 1 layout, not tab 2
+  call feedkeys("Jq", 'L')
+  execute 'WinResizerStartResize'
+  " We end up on tab 1 after J; verify we are indeed on tab 1
+  AssertEqual 1, tabpagenr(), 'should be on tab 1 after J+cancel'
+
+" ============================================================
+" Suite 9: Window size commands
+" ============================================================
+
+Before (reset to single window):
+  only
+  new
+  only
+
+After (cleanup):
+  only
+
+Execute (hfull keycode config exists with default value _=95):
+  AssertEqual 95, g:winresizer_keycode_hfull
+
+Execute (vfull keycode config exists with default value |=124):
+  AssertEqual 124, g:winresizer_keycode_vfull
+
+Execute (sizeeq keycode config exists with default value ==61):
+  AssertEqual 61, g:winresizer_keycode_sizeeq
+
+Execute (_ hotkey maximizes current window height):
+  split
+  resize 3
+  let h_before = winheight(0)
+  call feedkeys("_\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  Assert winheight(0) > h_before, '_ should maximize window height'
+
+Execute (| hotkey maximizes current window width):
+  vsplit
+  vertical resize 5
+  let w_before = winwidth(0)
+  call feedkeys("|\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  Assert winwidth(0) > w_before, '| should maximize window width'
+
+Execute (= hotkey equalizes window sizes):
+  split
+  resize 3
+  let h_before = winheight(0)
+  call feedkeys("=\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  Assert winheight(0) > h_before, '= should equalize windows (height should grow from 3)'

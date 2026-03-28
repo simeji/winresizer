@@ -70,6 +70,11 @@ The key values are ASCII values. You can find a list of mappings [here](https://
 |g:winresizer_keycode_finish|13(`Enter`)|Fix and escape from window resize mode|
 |g:winresizer_keycode_cancel|113(`q`)|Cancel and quit window resize mode|
 |g:winresizer_keycode_close|120(`x`)|Close the current window (no-op if only one window remains)|
+|g:winresizer_keycode_hfull|95(`_`)|Maximize current window height (resize mode only)|
+|g:winresizer_keycode_vfull|124(`\|`)|Maximize current window width (resize mode only)|
+|g:winresizer_keycode_sizeeq|61(`=`)|Equalize all window sizes (resize mode only)|
+|g:winresizer_keycode_tabl|74(`J`)|Switch to previous tab (all modes)|
+|g:winresizer_keycode_tabr|75(`K`)|Switch to next tab (all modes)|
 |g:winresizer_keycode_split|115(`s`)|Split window horizontally (focus mode only)|
 |g:winresizer_keycode_vsplit|118(`v`)|Split window vertically (focus mode only)|
 |g:winresizer_keycode_flast|36(`$`)|Move focus to last window (focus mode only)|
