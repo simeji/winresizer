@@ -1,0 +1,22 @@
+name: Test
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Vim
+        run: sudo apt-get install -y vim
+
+      - name: Run tests
+        run: vim -Es -u test/vimrc '+Vader! test/winresizer.vader'
