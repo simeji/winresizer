@@ -12,9 +12,16 @@ set cpo&vim
 fun! winresizer#getEdgeInfo()
   let chk_direct = ['left', 'down', 'up', 'right']
   let result = {}
-  for direct in chk_direct
-    exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
-  endfor
+  if getcmdwintype() ==# ''
+      for direct in chk_direct
+        silent! exe 'let result["' . direct . '"] = ' . !winresizer#canMoveCursorFromCurrentWindow(direct)
+      endfor
+  else
+      let result['left'] = 1
+      let result['down'] = 1
+      let result['up'] = 0
+      let result['right'] = 1
+  endif
   return result
 endfun
 
