@@ -289,16 +289,17 @@ After (cleanup):
 Execute (close key config exists with default value x=120):
   AssertEqual 120, g:winresizer_keycode_close
 
-Execute (closing a window reduces window count):
+Execute (x hotkey closes window through startResize dispatch):
   AssertEqual 2, winnr('$'), 'should start with 2 windows'
-  close
-  AssertEqual 1, winnr('$'), 'should have 1 window after close'
+  " Pre-populate typeahead: x=close, Enter=finish
+  " 'L' pushes to the front of typeahead without remapping
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should close window via startResize'
 
-Execute (close is no-op when only one window remains):
+Execute (x hotkey is no-op when only one window remains):
   only
   AssertEqual 1, winnr('$')
-  " winnr('$') > 1 guard prevents closing last window
-  if winnr('$') > 1
-    close
-  endif
-  AssertEqual 1, winnr('$'), 'single window should remain'
+  call feedkeys("x\<CR>", 'L')
+  execute 'WinResizerStartResize'
+  AssertEqual 1, winnr('$'), 'x hotkey should not close last window'
